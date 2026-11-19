@@ -1,0 +1,29 @@
+tariff_class: retail
+type: tou
+name: AGL Battery Rewards TOU 2026
+state: VIC
+
+# Sources
+# https://www.agl.com.au/residential/energy/compare-plans/battery-rewards-plan
+# https://www.agl.com.au/residential/solar-and-batteries/virtual-power-plant
+
+# usage_tariffs must tile [0, 24).
+usage_tariffs:
+  - [0,  15, 19.948]
+  - [15, 21, 34.026]
+  - [21, 24, 19.948]
+
+# feedin_tariffs must tile [0, 24).
+feedin_tariffs:
+  - [0,   7,  0.5]
+  - [7,   8,  0.5]    # Morning peak
+  - [8,  17,  0.5]
+  - [17, 21, 26.5]    # Evening peak
+  - [21, 24,  0.5]
+
+usage_other_c_per_kwh:
+  greenpower: 1.1     # Based on AGL published greenpower rates https://www.agl.com.au/residential/energy/green-energy
+
+daily_charges_c_per_day:
+  supply: 107.207
+  # vpp: -21.92  # Excluded for solar only - normally $80 reward per year 80*100/365 = 21.92 c/day

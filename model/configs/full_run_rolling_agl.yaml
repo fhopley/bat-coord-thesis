@@ -1,0 +1,121 @@
+# Full run — Rolling for AGL Battery Rewards with exposure to the VPP
+# 10 battery sizes (5–50 kWh)
+#
+# Run command:
+#   python3 -u -m model.main model/configs/full_run_rolling_agl.yaml --workers 6 2>&1 | tee logs/full_run_rolling_agl_$(date +%Y%m%d_%H%M%S).log
+#
+# With save_flows (careful, large output):
+#   python3 -u -m model.main model/configs/full_run_rolling_agl.yaml --save-flows --workers 6 2>&1 | tee logs/full_run_rolling_agl_$(date +%Y%m%d_%H%M%S).log
+#
+# Output: data/output/runs/full_run_rolling_agl/scenarios/{state}_{year}_{name}/
+
+name: full_run_rolling_agl
+
+states: [NSW, QLD, SA, VIC]
+years: [2021, 2022, 2023, 2024, 2025]
+
+cohort: solar_battery
+coordination_type: rolling_vpp_tou_event
+export_limit_kw_per_phase: 10.0
+
+rolling:
+  forecast_source: predispatch
+  horizon_hours: 18.0
+  current_interval_price: price_and_next
+  on_degraded_period: infill
+  max_staleness_hours: 800.0
+  usage_forecast: {}
+  solar_forecast: {}
+
+network_tariff_ids:
+  NSW: {2021: NSW_ausgrid_ea025_ea029_2026, 2022: NSW_ausgrid_ea025_ea029_2026, 2023: NSW_ausgrid_ea025_ea029_2026, 2024: NSW_ausgrid_ea025_ea029_2026, 2025: NSW_ausgrid_ea025_ea029_2026}
+  QLD: {2021: QLD_energex_6900_2026, 2022: QLD_energex_6900_2026, 2023: QLD_energex_6900_2026, 2024: QLD_energex_6900_2026, 2025: QLD_energex_6900_2026}
+  SA: {2021: SA_sapn_rtou_2026, 2022: SA_sapn_rtou_2026, 2023: SA_sapn_rtou_2026, 2024: SA_sapn_rtou_2026, 2025: SA_sapn_rtou_2026}
+  VIC: {2021: VIC_united_energy_URSTOU_2026, 2022: VIC_united_energy_URSTOU_2026, 2023: VIC_united_energy_URSTOU_2026, 2024: VIC_united_energy_URSTOU_2026, 2025: VIC_united_energy_URSTOU_2026}
+retail_tariff_ids:
+  NSW: {2021: NSW_agl_battery_rewards_vpp_2026, 2022: NSW_agl_battery_rewards_vpp_2026, 2023: NSW_agl_battery_rewards_vpp_2026, 2024: NSW_agl_battery_rewards_vpp_2026, 2025: NSW_agl_battery_rewards_vpp_2026}
+  QLD: {2021: QLD_agl_battery_rewards_vpp_2026, 2022: QLD_agl_battery_rewards_vpp_2026, 2023: QLD_agl_battery_rewards_vpp_2026, 2024: QLD_agl_battery_rewards_vpp_2026, 2025: QLD_agl_battery_rewards_vpp_2026}
+  SA: {2021: SA_agl_battery_rewards_vpp_2026, 2022: SA_agl_battery_rewards_vpp_2026, 2023: SA_agl_battery_rewards_vpp_2026, 2024: SA_agl_battery_rewards_vpp_2026, 2025: SA_agl_battery_rewards_vpp_2026}
+  VIC: {2021: VIC_agl_battery_rewards_vpp_2026, 2022: VIC_agl_battery_rewards_vpp_2026, 2023: VIC_agl_battery_rewards_vpp_2026, 2024: VIC_agl_battery_rewards_vpp_2026, 2025: VIC_agl_battery_rewards_vpp_2026}
+op_retail_tariff_id: NSW_operator_wholesale_2026
+
+battery_specs:
+  - name: 5kWh
+    capacity_kwh: 5.0
+    backup_reserve_pct: 20.0
+    power_kw: 2.5
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+
+  - name: 10kWh
+    capacity_kwh: 10.0
+    backup_reserve_pct: 20.0
+    power_kw: 5.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+
+  - name: 15kWh
+    capacity_kwh: 15.0
+    backup_reserve_pct: 20.0
+    power_kw: 7.5
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+
+  - name: 20kWh
+    capacity_kwh: 20.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+
+  - name: 25kWh
+    capacity_kwh: 25.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+
+  - name: 30kWh
+    capacity_kwh: 30.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+
+  - name: 35kWh
+    capacity_kwh: 35.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+
+  - name: 40kWh
+    capacity_kwh: 40.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+
+  - name: 45kWh
+    capacity_kwh: 45.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+
+  - name: 50kWh
+    capacity_kwh: 50.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039

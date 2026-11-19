@@ -1,0 +1,41 @@
+tariff_class: retail
+type: tou
+name: AGL Battery Rewards VPP 2026
+state: QLD
+
+# Sources
+# https://www.agl.com.au/residential/energy/compare-plans/battery-rewards-plan
+# https://www.agl.com.au/residential/solar-and-batteries/virtual-power-plant
+
+# usage_tariffs must tile [0, 24).
+usage_tariffs:
+  - [0,   9, 27.357]
+  - [9,  16, 18.106]
+  - [16, 21, 36.212]
+  - [21, 24, 27.357]
+
+# feedin_tariffs must tile [0, 24).
+feedin_tariffs:
+  - [0,   7,  2.0]
+  - [7,   8,  2.0]    # Morning peak
+  - [8,  17,  2.0]
+  - [17, 21, 28.0]    # Evening peak
+  - [21, 24,  2.0]
+
+usage_other_c_per_kwh:
+  greenpower: 1.1     # Based on AGL published greenpower rates https://www.agl.com.au/residential/energy/green-energy
+
+daily_charges_c_per_day:
+  supply: 174.262
+  vpp: -21.92  # $80/yr standing VPP participation reward: 80*100/365 = 21.92 c/day
+
+vpp:
+  exp_reward_c_per_kwh: 100.0  # $1/kWh on forced battery export during VPP events
+  imp_reward_c_per_kwh: 100.0  # $1/kWh on forced battery import during VPP events
+  kwh_limit: 250.0             # Annual cap on total operator-dispatched energy
+  limit_applies_to: import_and_export
+  default_mode: self_consumption  # Battery operates in self-consumption mode between events
+  event_window_hours: 1.0        # Operator takes control up to 1 hour before each price spike
+  vpp_threshold_dollars_per_mwh: 1000.0  # Mark events when wholesale price exceeds $1000/MWh
+  curtail_c_per_kwh: 8    # Set to prefer curtailment to battery cycling
+  min_export_price_mode: based_on_this_year  # Use the current year's wholesale price data to set the min_export_price_dollars_per_mwh threshold

@@ -1,0 +1,47 @@
+# Ausgrid EA025 EA029 network tariff (2026-27)
+# Reference: Ausgrid Network Price List 2026-27
+# https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=271b5e8e
+# https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/43186249e82a461aad26ed83ab6c0102?v=e3fd7222
+#
+# tariff_class: network
+# Physical network charges and loss factors for the connection point.
+# Always paired with a retail tariff in a scenario. The loss factors here
+# are applied to BOTH the network layer and the wholesale layer (the
+# wholesale layer reads them from this file), regardless of retail plan.
+#
+# All c/kWh and c/day values are GST-inclusive.
+
+tariff_class: network
+name: Ausgrid EA025 EA029 Network Tariff 2026-27
+state: NSW
+
+# Network usage (import) time-of-use rates, c/kWh inc GST.
+# Source ex-GST: 5.3570 / 32.5164  / 5.3570 -> x1.1 for GST.
+usage_tariffs:
+  - [0,  15, 5.8927]    # 5.3570 * 1.1
+  - [15, 21, 35.7680]   # 32.5164  * 1.1
+  - [21, 24, 5.8927]    # 5.3570 * 1.1
+
+# Network export (feedin) reward rates, c/kWh inc GST. Ausgrid EA029.
+# Source: -1.2320 ex-GST (penalty 10:00-15:00) -> -1.3552 inc GST;
+#         3.8551 (reward 16:00-21:00, GST treatment unclear, used as-is).
+feedin_tariffs:
+  - [0,  10, 0]
+  - [10, 15, -1.3552]   # -1.2320 * 1.1
+  - [15, 16, 0]
+  - [16, 21, 3.8551]    # 3.8551 (no GST adjustment)
+  - [21, 24, 0]
+
+# Daily fixed charges, c/day inc GST. Summed by the loader into
+# daily_c_per_day; listed individually here for auditability.
+daily_charges_c_per_day:
+  network_access: 69.5563   # 63.2330 * 1.1
+  metering: 8.60112         # 7.8192 * 1.1
+  export_access: 3.96605    # 3.6055 * 1.1
+
+# Loss factors (raw; billing combines as usage_dlf*import_tlf for imports
+# and export_dlf*export_tlf for exports).
+usage_dlf: 1.0429    # From AEMO loss factor data for Ausgrid EA025, 2026-27 
+export_dlf: 0.9943   # From AEMO loss factor data for Ausgrid EA029, 2026-27
+import_tlf: 1.004    # Average of Sydney substantion loss factors for 2026-27, from AEMO loss factor data
+export_tlf: 1.004    # No export specific loss factor provided, using same as import_tlf

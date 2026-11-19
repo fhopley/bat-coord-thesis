@@ -1,0 +1,22 @@
+# Single-scenario example: one state, one year, one battery spec.
+# Short string forms allowed because states and years each have one entry.
+# python3 -u -m model.main model/configs/example_perfect_foresight_lp_advanced.yaml 2>&1 | tee logs/run_$(date +%Y%m%d_%H%M%S).log
+
+name: perfect_foresight_lp_advanced
+
+states: [NSW]
+years: [2022]
+
+cohort: solar_battery
+coordination_type: perfect_foresight_advanced
+
+network_tariff_id: ausgrid_ea025_network_2024
+retail_tariff_id: agl_battery_rewards_tou_2025
+
+battery_spec:
+  capacity_kwh: 13.5
+  backup_reserve_pct: 10.0
+  power_kw: 5.0
+  charge_efficiency: 0.95
+  discharge_efficiency: 0.95
+  c_deg_per_kwh: 0.005

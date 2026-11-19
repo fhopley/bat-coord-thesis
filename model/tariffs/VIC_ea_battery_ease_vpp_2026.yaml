@@ -1,0 +1,50 @@
+tariff_class: retail
+type: tou
+name: EA Battery Ease VPP 2026
+state: VIC
+
+# Sources
+# https://home.energyaustralia.com.au/battery-ease
+# https://home.energyaustralia.com.au/battery-ease#embedded-offer
+# https://rendering-gw.home.energyaustralia.com.au/asset/0925_Battery_Ease_VPP_TC_Update_ef627cdfd7.pdf
+
+# usage_tariffs must tile [0, 24).
+usage_tariffs:
+  - [0,  11, 26.07]
+  - [11, 16, 12.07]
+  - [16, 21, 36.83]
+  - [21, 24, 26.07]
+
+# feedin_tariffs must tile [0, 24).
+feedin_tariffs:
+  - [0,  24,  0.0]
+
+block_export_tiers:
+  - start_hour: 0
+    end_hour: 24
+    applies_weekends: true
+    tiers:
+      - threshold_kwh: 10.0
+        rate_c_per_kwh: 8.0
+      - threshold_kwh: .inf
+        rate_c_per_kwh: 1.5
+
+usage_other_c_per_kwh:
+  greenpower: 4.95   # Based on Energy Australia published greenpower rates https://www.energyaustralia.com.au/home/electricity-and-gas/go-green/greenpower-energy-plans
+
+daily_charges_c_per_day:
+  supply: 74.28
+  vpp: -49.315   # $15/month standing VPP participation reward: 15*12/365*100 = 49.315 c/day
+
+vpp:
+  exp_reward_c_per_kwh: 0.0001  # Nominal amount, no real reward given
+  imp_reward_c_per_kwh: 0.0001  # Nominal amount, no real reward given
+  kwh_limit: 200.0              # Annual cap on total operator-dispatched energy
+  limit_applies_to: export_only
+  default_mode: tou  # Battery operates in time-of-use optimisation mode between events
+  event_window_hours: 0.25         # Operator takes control for any number of events per day, 15 minutes chosen based on EA interview
+  vpp_threshold_dollars_per_mwh: 500.0  # Mark events when wholesale price exceeds $500/MWh
+  curtail_c_per_kwh: 8    # Set to prefer curtailment to battery cycling
+  min_export_price_dollars_per_mwh: 300.0  # Don't export to grid unless wholesale price exceeds value
+  min_export_price_mode: based_on_this_year  # Use the current year's wholesale price data to set the min_export_price_dollars_per_mwh threshold
+  no_grid_charge_windows: [0, 24]

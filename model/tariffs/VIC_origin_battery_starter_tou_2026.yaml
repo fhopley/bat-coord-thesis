@@ -1,0 +1,26 @@
+tariff_class: retail
+type: tou
+name: Origin Battery Starter TOU 2026
+state: VIC
+
+# Sources
+# https://www.originenergy.com.au/solar/battery-plans/starter/?planfuel=Elec
+# https://www.originenergy.com.au/solar/battery-plans/lite/
+
+# usage_tariffs must tile [0, 24).
+usage_tariffs:
+  - [0,  17, 27.28]
+  - [17, 21, 31.90]
+  - [21, 24, 27.28]
+
+# feedin_tariffs must tile [0, 24).
+feedin_tariffs:
+  - [0,  17, 1.0]
+  - [17, 21, 26.5]
+  - [21, 24, 1.0]
+
+usage_other_c_per_kwh:
+  greenpower: 4.5   # Based on Origin Energy published greenpower rates https://www.originenergy.com.au/electricity-gas/greenpower/
+  
+daily_charges_c_per_day:
+  supply: 108.02

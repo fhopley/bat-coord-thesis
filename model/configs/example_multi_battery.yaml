@@ -1,0 +1,37 @@
+# Multi-battery cross-product example: one state, one year, three battery
+# specs. Expands to three scenarios with scenario_ids:
+#   NSW_2022_powerwall
+#   NSW_2022_small
+#   NSW_2022_large
+
+name: example_multi_battery
+
+states: [NSW]
+years: [2022]
+
+cohort: solar_battery
+coordination_type: self_consumption
+
+network_tariff_id: ausgrid_ea025_network_2024
+retail_tariff_id: amber_wholesale_2024
+
+# Each entry needs a 'name' that becomes part of the scenario_id.
+battery_specs:
+  - name: powerwall
+    capacity_kwh: 13.5
+    backup_reserve_pct: 10.0
+    power_kw: 5.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+  - name: small
+    capacity_kwh: 6.0
+    backup_reserve_pct: 10.0
+    power_kw: 3.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+  - name: large
+    capacity_kwh: 27.0
+    backup_reserve_pct: 10.0
+    power_kw: 7.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95

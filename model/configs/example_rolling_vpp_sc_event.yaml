@@ -1,0 +1,34 @@
+# Single-scenario example: one state, one year, one battery spec.
+# Short string forms allowed because states and years each have one entry.
+# Run command:
+#   python3 -u -m model.main model/configs/example_rolling_vpp_sc_event.yaml --max-sites 1 2>&1 | tee logs/run_$(date +%Y%m%d_%H%M%S).log
+
+name: rolling_vpp_sc_event
+
+states: [NSW]
+years: [2022]
+
+cohort: solar_battery
+coordination_type: rolling_vpp_sc_event
+export_limit_kw_per_phase: 10.0
+
+rolling:
+  forecast_source: predispatch
+  horizon_hours: 18.0
+  current_interval_price: price_and_next
+  on_degraded_period: infill
+  max_staleness_hours: 800.0
+  usage_forecast: {}
+  solar_forecast: {}
+
+network_tariff_id: NSW_ausgrid_ea025_ea029_2026
+retail_tariff_id: agl_battery_rewards_vpp_2026
+op_retail_tariff_id: agl_operator_wholesale_2025
+
+battery_spec:
+  capacity_kwh: 20.0
+  backup_reserve_pct: 20.0
+  power_kw: 10.0
+  charge_efficiency: 0.95
+  discharge_efficiency: 0.95
+  c_deg_per_kwh: 0.039

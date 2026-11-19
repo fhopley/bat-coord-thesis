@@ -1,0 +1,34 @@
+tariff_class: retail
+type: tou
+name: AGL Solar Savers TOU 2026
+state: NSW
+
+# Sources
+# https://www.agl.com.au/residential/energy/compare-plans/solar-savers
+
+# usage_tariffs must tile [0, 24).
+usage_tariffs:
+  - [0,  15, 24.038]
+  - [15, 21, 60.196]
+  - [21, 24, 24.038]
+
+# feedin_tariffs must tile [0, 24).
+feedin_tariffs:
+  - [0,   24,  0]
+  
+block_export_tiers:
+  - start_hour: 0
+    end_hour: 24
+    applies_weekends: true
+    tiers:
+      - threshold_kwh: 8.0
+        rate_c_per_kwh: 8.0
+      - threshold_kwh: .inf
+        rate_c_per_kwh: 3.0
+
+usage_other_c_per_kwh:
+  greenpower: 1.1     # Based on AGL published greenpower rates https://www.agl.com.au/residential/energy/green-energy
+
+daily_charges_c_per_day:
+  supply: 176.26
+  

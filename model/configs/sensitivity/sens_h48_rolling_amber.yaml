@@ -1,0 +1,118 @@
+# Sensitivity run - rolling horizon 48 h
+# full_run_rolling_amber.yaml restricted to NSW 2024, 5-50 kWh (10 sizes), with horizon_hours 48.0.
+# Specification: docs/sensitivity_runs_spec.md
+#
+# Run command (from the project root):
+#   python3 -u -m model.main model/configs/sensitivity/sens_h48_rolling_amber.yaml --save-flows --workers 6 2>&1 | tee logs/sens_h48_rolling_amber_$(date +%Y%m%d_%H%M%S).log
+#
+# Output: data/output/runs/sens_h48_rolling_amber/scenarios/NSW_2024_{size}kWh/
+
+name: sens_h48_rolling_amber
+
+states: [NSW]
+years: [2024]
+
+cohort: solar_battery
+coordination_type: rolling_perfect_foresight_lp
+export_limit_kw_per_phase: 10.0
+
+# Settings are the production run's, with horizon_hours the one change.
+# The production horizon is 18 h; this run tests 48 h. Pre-dispatch
+# covers 15.1 to 39 h ahead, so beyond that the price provider infills
+# from earlier prices (docs/rolling_optimisation_spec.md, Horizon and
+# infill), which is the trade a real controller faces at a long horizon.
+# usage_forecast/solar_forecast: {} enables each with its fitted defaults
+# (UsageForecastConfig / SolarForecastConfig in model/core/scenario.py).
+# current_interval_price: price_and_next -- "full" in the rung name means
+# FULL information: the settled price (~9s in) plus the refreshed forecast
+# (~39s in), the most a real controller has (see RollingConfig's own
+# docstring). This is NOT the default 'forecast' mode -- that's the LEAST
+# informed setting (5-minute-ahead forecast only, nothing settled), and
+# using it here would silently model a less capable controller than the
+# rung is meant to represent. Confirmed against run_cohort_rungs.py's RUNGS
+# table, which is the single source of truth for what each rung name means.
+rolling:
+  forecast_source: predispatch
+  horizon_hours: 48.0
+  current_interval_price: price_and_next
+  on_degraded_period: infill
+  max_staleness_hours: 800.0
+  usage_forecast: {}
+  solar_forecast: {}
+
+network_tariff_ids:
+  NSW: {2024: NSW_ausgrid_ea025_ea029_2026}
+retail_tariff_ids:
+  NSW: {2024: NSW_amber_wholesale_2026}
+
+battery_specs:
+  - name: 5kWh
+    capacity_kwh: 5.0
+    backup_reserve_pct: 20.0
+    power_kw: 2.5
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 10kWh
+    capacity_kwh: 10.0
+    backup_reserve_pct: 20.0
+    power_kw: 5.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 15kWh
+    capacity_kwh: 15.0
+    backup_reserve_pct: 20.0
+    power_kw: 7.5
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 20kWh
+    capacity_kwh: 20.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 25kWh
+    capacity_kwh: 25.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 30kWh
+    capacity_kwh: 30.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 35kWh
+    capacity_kwh: 35.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 40kWh
+    capacity_kwh: 40.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 45kWh
+    capacity_kwh: 45.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 50kWh
+    capacity_kwh: 50.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039

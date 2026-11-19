@@ -1,0 +1,42 @@
+# Energex Residential TOU Energy (6900) network tariff (2026-27)
+# Reference: Energex 2026-27 Network Price List, SACS Residential
+# https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx
+# https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/market-operations/loss-factors-and-regional-boundaries
+# https://www.aemo.com.au/-/media/files/electricity/nem/security_and_reliability/loss_factors_and_regional_boundaries/2026-27/marginal-loss-factors-for-the-2026-27-financial-year.pdf?rev=df0d33ee9c3049dfb6f406cdfad7d086&sc_lang=en
+#
+# tariff_class: network
+# Physical network charges and loss factors for the connection point.
+# Always paired with a retail tariff in a scenario. The loss factors here
+# are applied to BOTH the network layer and the wholesale layer (the
+# wholesale layer reads them from this file), regardless of retail plan.
+#
+# All c/kWh and c/day values are GST-inclusive.
+
+tariff_class: network
+name: Energex Residential TOU Energy (6900) Network Tariff 2026-27
+state: QLD
+
+# Network usage (import) time-of-use rates, c/kWh inc GST.
+# Source ex-GST: 6.069 / 4.34  / 19.533 / 6.069 -> x1.1 for GST.
+usage_tariffs:
+  - [0,  11, 6.6759]    # 6.069 * 1.1
+  - [11, 16, 4.774]     # 4.34 * 1.1
+  - [16, 21, 21.4863]   # 19.533 * 1.1
+  - [21, 24, 6.6759]    # 6.069 * 1.1
+
+# Network export (feedin) reward rates, c/kWh inc GST. 
+# Source: no export charges or penalty on 6900
+feedin_tariffs:
+  - [0,  24, 0]
+  
+# Daily fixed charges, c/day inc GST. Summed by the loader into
+# daily_c_per_day; listed individually here for auditability.
+daily_charges_c_per_day:
+  network_access: 85.14   # 77.4 * 1.1, includes metering and export access
+
+# Loss factors (raw; billing combines as usage_dlf*import_tlf for imports
+# and export_dlf*export_tlf for exports).
+usage_dlf: 1.05034   # Energex Low voltage line connected (FLCL), 2026-27, from AEMO loss factor data
+export_dlf: 1.05034  # No export specific loss factor provided, using same as usage_dlf
+import_tlf: 1.01     # Average of Brisbane substantion loss factors for 2026-27, from AEMO loss factor data
+export_tlf: 1.01     # No export specific loss factor provided, using same as import_tlf

@@ -1,0 +1,38 @@
+tariff_class: retail
+type: tou
+name: EA Battery Ease TOU 2026
+state: NSW
+
+# Sources
+# https://home.energyaustralia.com.au/battery-ease
+# https://home.energyaustralia.com.au/battery-ease#embedded-offer
+# https://rendering-gw.home.energyaustralia.com.au/asset/0925_Battery_Ease_VPP_TC_Update_ef627cdfd7.pdf
+
+# usage_tariffs must tile [0, 24).
+usage_tariffs:
+  - [0,  10, 34.50]
+  - [10, 14, 17.50]
+  - [14, 15, 34.50]
+  - [15, 21, 53.98]
+  - [21, 24, 34.50]
+
+# feedin_tariffs must tile [0, 24).
+feedin_tariffs:
+  - [0,  24,  0.0]
+
+block_export_tiers:
+  - start_hour: 0
+    end_hour: 24
+    applies_weekends: true
+    tiers:
+      - threshold_kwh: 10.0
+        rate_c_per_kwh: 8.0
+      - threshold_kwh: .inf
+        rate_c_per_kwh: 3.0
+
+usage_other_c_per_kwh:
+  greenpower: 4.95   # Based on Energy Australia published greenpower rates https://www.energyaustralia.com.au/home/electricity-and-gas/go-green/greenpower-energy-plans
+
+daily_charges_c_per_day:
+  supply: 110.0
+  # vpp: -49.315   # Not used for solar only - normally $15/month standing VPP participation reward: 15*12/365*100 = 49.315 c/day

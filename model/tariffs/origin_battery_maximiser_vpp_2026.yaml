@@ -1,0 +1,38 @@
+tariff_class: retail
+type: tou
+name: Origin Battery Maximiser VPP 2026
+state: NSW
+
+# Sources
+# https://www.originenergy.com.au/solar/battery-plans/maximiser/?planfuel=Elec
+
+# usage_tariffs must tile [0, 24).
+usage_tariffs:
+  - [0,  17, 18.7]
+  - [17, 21, 53.9]
+  - [21, 24, 18.7]
+  
+# feedin_tariffs must tile [0, 24).
+feedin_tariffs:
+  - [0,  17, 5.0]
+  - [17, 21, 22.0]
+  - [21, 24, 5.0]
+
+usage_other_c_per_kwh:
+  greenpower: 4.5   # Based on Origin Energy published greenpower rates https://www.originenergy.com.au/electricity-gas/greenpower/
+
+daily_charges_c_per_day:
+  supply: 125.67
+
+vpp:
+  exp_reward_c_per_kwh: 0.0001            # Nominal amount, no real reward given
+  imp_reward_c_per_kwh: 0.0002            # Nominal amount, no real reward given
+  kwh_limit: 1000.0                       # There is no annual cap on exports or imports, high level set
+  limit_applies_to: export_only
+  default_mode: tou                       # Battery operates in time-of-use optimisation mode between events
+  event_window_hours: 2.0                 # Operator takes control for any number of events per day, 2 hrs chosen to allow multiple events
+  vpp_threshold_dollars_per_mwh: 1000.0   # Mark events when wholesale price exceeds $1000/MWh
+  curtail_c_per_kwh: 8                    # Set to prefer curtailment to battery cycling
+  no_grid_charge_windows: [17, 21]        # Prevent charging from the grid during TOU peak period (5pm-9pm)
+  min_export_price_dollars_per_mwh: 300.0
+  min_export_price_mode: based_on_this_year  # Use the current year's wholesale price data to set the min_export_price_dollars_per_mwh threshold

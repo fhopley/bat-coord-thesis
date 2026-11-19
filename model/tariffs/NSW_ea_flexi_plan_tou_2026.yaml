@@ -1,0 +1,26 @@
+tariff_class: retail
+type: tou
+name: EA Flexi Plan TOU 2026
+state: NSW
+
+# Sources
+# https://home.energyaustralia.com.au
+
+# usage_tariffs must tile [0, 24).
+usage_tariffs:
+  - [0,  10, 25.78]
+  - [10, 14, 22.03]
+  - [14, 15, 25.78]
+  - [15, 21, 52.01]
+  - [21, 24, 25.78]
+
+# feedin_tariffs must tile [0, 24).
+feedin_tariffs:
+  - [0,  24,  3.0]
+
+usage_other_c_per_kwh:
+  greenpower: 4.95   # Based on Energy Australia published greenpower rates https://www.energyaustralia.com.au/home/electricity-and-gas/go-green/greenpower-energy-plans
+
+daily_charges_c_per_day:
+  supply: 155.24
+  

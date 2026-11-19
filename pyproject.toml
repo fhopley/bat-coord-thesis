@@ -1,0 +1,34 @@
+[project]
+name = "thesis-coordination-model"
+version = "0.1.0"
+description = "Coordination model for home battery operation in Australia's NEM (UNSW thesis)."
+requires-python = ">=3.12"
+dependencies = [
+    "pandas>=3.0",
+    "numpy>=2.0",
+    "scipy>=1.13",      # perfect_foresight_lp LP solver (scipy.optimize.linprog / HiGHS)
+    "highspy>=1.7",     # persistent HiGHS models in the rolling components
+    "pyarrow>=19.0",    # Parquet I/O for clean EDP traces and NEM price files
+    "pyyaml>=6.0",      # tariff and scenario YAML loading
+    "matplotlib>=3.9",  # dev visualisation scripts
+    "openpyxl>=3.1",    # AEMO MCL calculators (analysis/scripts/prudential_analysis.py)
+    "nemosis>=3.8",     # pipeline/nem_prices price download
+    "pytz>=2024.0",
+    "requests>=2.32",
+    "urllib3>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["model/tests"]
+pythonpath = ["."]
+markers = [
+    "slow: takes more than about 5 s (full-year LP or rolling runs); deselect with -m 'not slow'",
+]
+
+[tool.setuptools]
+packages = []

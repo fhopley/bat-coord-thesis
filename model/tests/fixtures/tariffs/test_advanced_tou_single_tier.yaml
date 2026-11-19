@@ -1,0 +1,20 @@
+tariff_class: retail
+type: tou
+name: Test Advanced TOU Single Tier
+state: NSW
+
+usage_tariffs:
+  - [0, 24, 20.0]
+
+feedin_tariffs:
+  - [0, 24, 5.0]
+
+daily_charges_c_per_day:
+  supply: 110.0
+
+block_import_tiers:
+  - start_hour: 7
+    end_hour: 15
+    tiers:
+      - threshold_kwh: .inf    # only one tier -- should raise
+        rate_c_per_kwh: 10.0

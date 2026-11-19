@@ -1,0 +1,22 @@
+# Mixed retail plan fixture: TOU imports, floored share of real-time export value.
+tariff_class: retail
+type: mixed
+name: TestMixed
+state: NSW
+
+usage_tariffs:
+  - [0,  15, 24.0]
+  - [15, 21, 50.0]
+  - [21, 24, 24.0]
+
+usage_other_c_per_kwh:
+  greenpower: 1.0
+
+feedin_other_c_per_kwh: {}
+
+daily_charges_c_per_day:
+  subscription: 110.0
+
+wholesale_export_share: 0.9
+export_share_basis: wholesale
+export_floor_c_per_kwh: 0.0

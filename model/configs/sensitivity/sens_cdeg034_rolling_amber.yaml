@@ -1,0 +1,54 @@
+# Sensitivity run - degradation cost 3.4 c/kWh
+# full_run_rolling_amber.yaml restricted to NSW 2024, 20 kWh only, with c_deg_per_kwh 0.034.
+# Specification: docs/sensitivity_runs_spec.md
+#
+# Run command (from the project root):
+#   python3 -u -m model.main model/configs/sensitivity/sens_cdeg034_rolling_amber.yaml --save-flows --workers 6 2>&1 | tee logs/sens_cdeg034_rolling_amber_$(date +%Y%m%d_%H%M%S).log
+#
+# Output: data/output/runs/sens_cdeg034_rolling_amber/scenarios/NSW_2024_{size}kWh/
+
+name: sens_cdeg034_rolling_amber
+
+states: [NSW]
+years: [2024]
+
+cohort: solar_battery
+coordination_type: rolling_perfect_foresight_lp
+export_limit_kw_per_phase: 10.0
+
+# The one rung with ongoing validity per the integration plan: real AEMO
+# pre-dispatch forecasts, with both load and solar forecast (the EM ladder's
+# "predispatch_full_lf_sf"). horizon_hours=18 per the EDP horizon sweep
+# (~99% cohort VCR at both 20 and 50 kWh against longer horizons tested).
+# usage_forecast/solar_forecast: {} enables each with its fitted defaults
+# (UsageForecastConfig / SolarForecastConfig in model/core/scenario.py).
+# current_interval_price: price_and_next -- "full" in the rung name means
+# FULL information: the settled price (~9s in) plus the refreshed forecast
+# (~39s in), the most a real controller has (see RollingConfig's own
+# docstring). This is NOT the default 'forecast' mode -- that's the LEAST
+# informed setting (5-minute-ahead forecast only, nothing settled), and
+# using it here would silently model a less capable controller than the
+# rung is meant to represent. Confirmed against run_cohort_rungs.py's RUNGS
+# table, which is the single source of truth for what each rung name means.
+rolling:
+  forecast_source: predispatch
+  horizon_hours: 18.0
+  current_interval_price: price_and_next
+  on_degraded_period: infill
+  max_staleness_hours: 800.0
+  usage_forecast: {}
+  solar_forecast: {}
+
+network_tariff_ids:
+  NSW: {2024: NSW_ausgrid_ea025_ea029_2026}
+retail_tariff_ids:
+  NSW: {2024: NSW_amber_wholesale_2026}
+
+battery_specs:
+  - name: 20kWh
+    capacity_kwh: 20.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.034

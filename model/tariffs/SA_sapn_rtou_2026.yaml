@@ -1,0 +1,46 @@
+# SAPN Retail TOU (RTOU) network tariff (2026-27)
+# Reference: SAPN Annual Pricing Proposal 2026-27, March 2026, Table 9: NUoS Tariff Schedule 2026-27, pg 36
+# https://www.aer.gov.au/system/files/2026-04/SA%20Power%20Networks%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Customer%20Overview%20Document%20%E2%80%93%2010%20April%202026.pdf
+# https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/market-operations/loss-factors-and-regional-boundaries
+# https://www.aemo.com.au/-/media/files/electricity/nem/security_and_reliability/loss_factors_and_regional_boundaries/2026-27/marginal-loss-factors-for-the-2026-27-financial-year.pdf?rev=df0d33ee9c3049dfb6f406cdfad7d086&sc_lang=en
+#
+# tariff_class: network
+# Physical network charges and loss factors for the connection point.
+# Always paired with a retail tariff in a scenario. The loss factors here
+# are applied to BOTH the network layer and the wholesale layer (the
+# wholesale layer reads them from this file), regardless of retail plan.
+#
+# All c/kWh and c/day values are GST-inclusive.
+
+tariff_class: network
+name: SAPN Retail TOU Network Tariff 2026-27
+state: SA
+
+# Network usage (import) time-of-use rates, c/kWh inc GST.
+# Source ex-GST: 10.67 / 21.33  / 5.35 / 21.33 -> x1.1 for GST.
+usage_tariffs:
+  - [0,  6, 11.737]    # 10.67 * 1.1
+  - [6,  10, 23.463]   # 21.33 * 1.1
+  - [10, 16, 5.885]    # 5.35 * 1.1
+  - [16, 24, 23.463]   # 21.33 * 1.1
+
+# Network export (feedin) reward rates, c/kWh inc GST. 
+# Source: -1.000 ex-GST (penalty 10:00-16:00) -> -1.10 inc GST;
+#         no export reward on RTOU
+feedin_tariffs:
+  - [0,  10, 0]
+  - [10, 16, -1.1]   # -1.00 * 1.1
+  - [16, 24, 0]
+  
+# Daily fixed charges, c/day inc GST. Summed by the loader into
+# daily_c_per_day; listed individually here for auditability.
+daily_charges_c_per_day:
+  network_access: 72.083   # 65.53 * 1.1
+  metering: 2.882         # 2.62 * 1.1
+
+# Loss factors (raw; billing combines as usage_dlf*import_tlf for imports
+# and export_dlf*export_tlf for exports).
+usage_dlf: 1.1316   # SAPN Low voltage small customers, Residential, 2026-27, from AEMO loss factor data
+export_dlf: 1.1316  # No export specific loss factor provided, using same as usage_dlf
+import_tlf: 1.0013  # Average of Adelaide substantion loss factors for 2026-27, from AEMO loss factor data
+export_tlf: 1.0013  # No export specific loss factor provided, using same as import_tlf

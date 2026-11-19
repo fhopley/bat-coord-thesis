@@ -1,0 +1,22 @@
+# Minimal test TOU retail tariff with round-number rates.
+tariff_class: retail
+type: tou
+name: Test TOU
+state: NSW
+
+usage_tariffs:
+  - [0,  8,  10.0]
+  - [8,  18, 30.0]
+  - [18, 24, 20.0]
+
+usage_tariffs_weekend:
+  - [0, 24, 15.0]
+
+feedin_tariffs:
+  - [0, 24, 5.0]
+
+usage_other_c_per_kwh:
+  greenpower: 1.0
+
+daily_charges_c_per_day:
+  supply: 100.0

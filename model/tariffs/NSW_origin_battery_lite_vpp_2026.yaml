@@ -1,0 +1,37 @@
+tariff_class: retail
+type: tou
+name: Origin Battery Lite VPP 2026
+state: NSW
+
+# Sources
+# https://www.originenergy.com.au/solar/battery-plans/starter/?planfuel=Elec
+# https://www.originenergy.com.au/solar/battery-plans/lite/
+
+# usage_tariffs must tile [0, 24).
+usage_tariffs:
+  - [0,  17, 29.81]
+  - [17, 21, 54.01]
+  - [21, 24, 29.81]
+  
+# feedin_tariffs must tile [0, 24).
+feedin_tariffs:
+  - [0,  17, 3.0]
+  - [17, 21, 29.0]
+  - [21, 24, 3.0]
+
+usage_other_c_per_kwh:
+  greenpower: 4.5   # Based on Origin Energy published greenpower rates https://www.originenergy.com.au/electricity-gas/greenpower/
+  
+daily_charges_c_per_day:
+  supply: 139.04
+
+vpp:
+  exp_reward_c_per_kwh: 100.0             # $1/kWh on forced battery export during VPP events
+  imp_reward_c_per_kwh: 0.0001            # Nominal amount, no real reward given
+  kwh_limit: 200.0                        # Annual cap on total operator-dispatched energy
+  limit_applies_to: export_only
+  default_mode: self_consumption          # Battery operates in self-consumption mode between events
+  event_window_hours: 1.0                 # Updated to taking control for 1 hour based on Origin VPP operation interview
+  vpp_threshold_dollars_per_mwh: 1000.0   # Mark events when wholesale price exceeds $1000/MWh
+  curtail_c_per_kwh: 8                    # Set to prefer curtailment to battery cycling
+  min_export_price_mode: based_on_this_year  # Use the current year's wholesale price data to set the min_export_price_dollars_per_mwh threshold

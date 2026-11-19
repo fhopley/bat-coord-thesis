@@ -1,0 +1,46 @@
+# Ausgrid EA025 network tariff (2024-25)
+# Reference: Ausgrid Network Price List 2024-25
+# https://cdn.ausgrid.com.au/-/media/Documents/Regulation/Pricing/PList/Ausgrid-Network-Price-List-2024-25.pdf
+#
+# tariff_class: network
+# Physical network charges and loss factors for the connection point.
+# Always paired with a retail tariff in a scenario. The loss factors here
+# are applied to BOTH the network layer and the wholesale layer (the
+# wholesale layer reads them from this file), regardless of retail plan.
+#
+# All c/kWh and c/day values are GST-inclusive.
+
+tariff_class: network
+name: Ausgrid EA025 network
+state: NSW
+
+# Network usage (import) time-of-use rates, c/kWh inc GST.
+# Source ex-GST: 4.6503 / 26.8969 / 4.6503 -> x1.1 for GST.
+usage_tariffs:
+  - [0,  15, 5.11533]    # 4.6503 * 1.1
+  - [15, 21, 29.58659]   # 26.8969 * 1.1
+  - [21, 24, 5.11533]    # 4.6503 * 1.1
+
+# Network export (feedin) rates, c/kWh inc GST. Ausgrid EA029.
+# Source: -1.2029 ex-GST (penalty 10:00-15:00) -> -1.32319 inc GST;
+#         2.3370 (reward 16:00-21:00, GST treatment unclear, used as-is).
+feedin_tariffs:
+  - [0,  10, 0]
+  - [10, 15, -1.32319]   # -1.2029 * 1.1
+  - [15, 16, 0]
+  - [16, 21, 2.3370]
+  - [21, 24, 0]
+
+# Daily fixed charges, c/day inc GST. Summed by the loader into
+# daily_c_per_day; listed individually here for auditability.
+daily_charges_c_per_day:
+  network_access: 50.0453
+  metering: 7.3671
+  export_access: 3.3973
+
+# Loss factors (raw; billing combines as usage_dlf*import_tlf for imports
+# and export_dlf*export_tlf for exports).
+usage_dlf: 1.0431
+export_dlf: 0.9890
+import_tlf: 1.0025
+export_tlf: 1.0025

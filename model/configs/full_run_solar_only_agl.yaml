@@ -1,0 +1,29 @@
+# Full run — solar-only baseline for AGL
+#
+# Run command (serial; SC is fast, ~3 min total):
+#   python3 -u -m model.main model/configs/full_run_solar_only_agl.yaml \
+#       2>&1 | tee logs/full_run_solar_only_agl_$(date +%Y%m%d_%H%M%S).log
+#
+# With save_flows (careful, large output):
+#   python3 -u -m model.main model/configs/full_run_solar_only_agl.yaml --save-flows 2>&1 | tee logs/full_run_solar_only_agl_$(date +%Y%m%d_%H%M%S).log
+#
+# Output: data/output/runs/full_run_solar_only_agl/scenarios/{state}_{year}/
+
+name: full_run_solar_only_agl
+
+states: [NSW, QLD, SA, VIC]
+years: [2021, 2022, 2023, 2024, 2025]
+
+cohort: solar
+export_limit_kw_per_phase: 10.0
+
+network_tariff_ids:
+  NSW: {2021: NSW_ausgrid_ea025_ea029_2026, 2022: NSW_ausgrid_ea025_ea029_2026, 2023: NSW_ausgrid_ea025_ea029_2026, 2024: NSW_ausgrid_ea025_ea029_2026, 2025: NSW_ausgrid_ea025_ea029_2026}
+  QLD: {2021: QLD_energex_6900_2026, 2022: QLD_energex_6900_2026, 2023: QLD_energex_6900_2026, 2024: QLD_energex_6900_2026, 2025: QLD_energex_6900_2026}
+  SA: {2021: SA_sapn_rtou_2026, 2022: SA_sapn_rtou_2026, 2023: SA_sapn_rtou_2026, 2024: SA_sapn_rtou_2026, 2025: SA_sapn_rtou_2026}
+  VIC: {2021: VIC_united_energy_URSTOU_2026, 2022: VIC_united_energy_URSTOU_2026, 2023: VIC_united_energy_URSTOU_2026, 2024: VIC_united_energy_URSTOU_2026, 2025: VIC_united_energy_URSTOU_2026}
+retail_tariff_ids:
+  NSW: {2021: NSW_agl_battery_rewards_tou_2026, 2022: NSW_agl_battery_rewards_tou_2026, 2023: NSW_agl_battery_rewards_tou_2026, 2024: NSW_agl_battery_rewards_tou_2026, 2025: NSW_agl_battery_rewards_tou_2026}
+  QLD: {2021: QLD_agl_battery_rewards_tou_2026, 2022: QLD_agl_battery_rewards_tou_2026, 2023: QLD_agl_battery_rewards_tou_2026, 2024: QLD_agl_battery_rewards_tou_2026, 2025: QLD_agl_battery_rewards_tou_2026}
+  SA: {2021: SA_agl_battery_rewards_tou_2026, 2022: SA_agl_battery_rewards_tou_2026, 2023: SA_agl_battery_rewards_tou_2026, 2024: SA_agl_battery_rewards_tou_2026, 2025: SA_agl_battery_rewards_tou_2026}
+  VIC: {2021: VIC_agl_battery_rewards_tou_2026, 2022: VIC_agl_battery_rewards_tou_2026, 2023: VIC_agl_battery_rewards_tou_2026, 2024: VIC_agl_battery_rewards_tou_2026, 2025: VIC_agl_battery_rewards_tou_2026}

@@ -1,0 +1,14 @@
+# Minimal test wholesale-exposed retail tariff.
+tariff_class: retail
+type: wholesale_exposed
+name: Test Wholesale
+state: NSW
+gst_on_wholesale_import: false
+
+usage_other_c_per_kwh:
+  market: 2.0
+
+feedin_other_c_per_kwh: {}
+
+daily_charges_c_per_day:
+  subscription: 80.0

@@ -1,0 +1,106 @@
+# Sensitivity run - export-order nudge, Origin Battery Starter
+# full_run_rolling_origin_novpp.yaml restricted to NSW 2024, 5-50 kWh (10 sizes), with the export-order nudge enabled.
+# Specification: docs/sensitivity_runs_spec.md
+#
+# Run command (from the project root):
+#   python3 -u -m model.main model/configs/sensitivity/sens_nudge_rolling_origin_lite_novpp.yaml --save-flows --workers 6 2>&1 | tee logs/sens_nudge_rolling_origin_lite_novpp_$(date +%Y%m%d_%H%M%S).log
+#
+# Output: data/output/runs/sens_nudge_rolling_origin_lite_novpp/scenarios/NSW_2024_{size}kWh/
+
+name: sens_nudge_rolling_origin_lite_novpp
+
+states: [NSW]
+years: [2024]
+
+cohort: solar_battery
+coordination_type: rolling_perfect_foresight_lp_advanced
+export_limit_kw_per_phase: 10.0
+
+rolling:
+  forecast_source: predispatch
+  horizon_hours: 18.0
+  current_interval_price: price_and_next
+  on_degraded_period: infill
+  max_staleness_hours: 800.0
+  usage_forecast: {}
+  solar_forecast: {}
+
+# The export-order nudge under test.
+apply_export_order_nudge: true
+
+network_tariff_ids:
+  NSW: {2024: NSW_ausgrid_ea025_ea029_2026}
+retail_tariff_ids:
+  NSW: {2024: NSW_origin_battery_starter_tou_2026}
+
+battery_specs:
+  - name: 5kWh
+    capacity_kwh: 5.0
+    backup_reserve_pct: 20.0
+    power_kw: 2.5
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 10kWh
+    capacity_kwh: 10.0
+    backup_reserve_pct: 20.0
+    power_kw: 5.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 15kWh
+    capacity_kwh: 15.0
+    backup_reserve_pct: 20.0
+    power_kw: 7.5
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 20kWh
+    capacity_kwh: 20.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 25kWh
+    capacity_kwh: 25.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 30kWh
+    capacity_kwh: 30.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 35kWh
+    capacity_kwh: 35.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 40kWh
+    capacity_kwh: 40.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 45kWh
+    capacity_kwh: 45.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039
+  - name: 50kWh
+    capacity_kwh: 50.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039

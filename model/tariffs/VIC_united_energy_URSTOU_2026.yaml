@@ -1,0 +1,42 @@
+# United Energy Residential TOU (URSTOU) network tariff (2026-27)
+# Reference: United Energy 2026-27 Network Price List
+# https://www.aer.gov.au/system/files/2026-05/United%20Energy%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf
+# https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/market-operations/loss-factors-and-regional-boundaries
+# https://www.aemo.com.au/-/media/files/electricity/nem/security_and_reliability/loss_factors_and_regional_boundaries/2026-27/marginal-loss-factors-for-the-2026-27-financial-year.pdf?rev=df0d33ee9c3049dfb6f406cdfad7d086&sc_lang=en
+#
+# tariff_class: network
+# Physical network charges and loss factors for the connection point.
+# Always paired with a retail tariff in a scenario. The loss factors here
+# are applied to BOTH the network layer and the wholesale layer (the
+# wholesale layer reads them from this file), regardless of retail plan.
+#
+# All c/kWh and c/day values are GST-inclusive.
+
+tariff_class: network
+name: United Energy Residential TOU (URSTOU) Network Tariff 2026-27
+state: VIC
+
+# Network usage (import) time-of-use rates, c/kWh inc GST.
+# Source ex-GST: 5.220 / 1.000  / 20.9200 / 5.220 -> x1.1 for GST.
+usage_tariffs:
+  - [0,  11, 5.742]    # 5.220 * 1.1
+  - [11, 16, 1.100]    # 1.000 * 1.1
+  - [16, 21, 23.012]   # 20.9200 * 1.1
+  - [21, 24, 5.742]    # 5.220 * 1.1
+
+# Network export (feedin) reward rates, c/kWh inc GST. 
+# Source: no export charges or penalty on URSTOU
+feedin_tariffs:
+  - [0,  24, 0]
+  
+# Daily fixed charges, c/day inc GST. Summed by the loader into
+# daily_c_per_day; listed individually here for auditability.
+daily_charges_c_per_day:
+  network_access: 34.661   # 31.51 * 1.1, includes metering and export access
+
+# Loss factors (raw; billing combines as usage_dlf*import_tlf for imports
+# and export_dlf*export_tlf for exports).
+usage_dlf: 1.048   # United Energy DLF E Short Sub-transmission 240/415V, 2026-27, from AEMO loss factor data
+export_dlf: 1.048  # No export specific loss factor provided, using same as usage_dlf
+import_tlf: 1.001     # Average of Melbourne substantion loss factors for 2026-27, from AEMO loss factor data
+export_tlf: 1.001     # No export specific loss factor provided, using same as import_tlf

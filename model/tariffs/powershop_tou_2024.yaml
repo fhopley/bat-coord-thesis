@@ -1,0 +1,42 @@
+# Powershop time-of-use retail plan (historical)
+#
+# tariff_class: retail, type: tou
+# The customer pays the time-of-use period rates on imports and receives the
+# feedin rate on exports. The greenpower charge is a flat per-kWh import
+# adder. Network and wholesale layers are computed separately (the customer
+# never sees them, but the retailer incurs them) using the paired network
+# tariff and the wholesale price series.
+#
+# All values GST-inclusive (as published by the retailer).
+
+tariff_class: retail
+type: tou
+name: Powershop TOU
+state: NSW
+
+# Weekday usage rates, c/kWh.
+usage_tariffs:
+  - [0,  4,  9.59]
+  - [4,  7,  19.18]
+  - [7,  14, 28.15]
+  - [14, 20, 50.68]
+  - [20, 22, 28.15]
+  - [22, 24, 19.18]
+
+# Weekend usage rates, c/kWh.
+usage_tariffs_weekend:
+  - [0,  7,  19.18]
+  - [7,  22, 28.15]
+  - [22, 24, 19.18]
+
+# Feedin rate, c/kWh, flat all hours.
+feedin_tariffs:
+  - [0, 24, 5.0]
+
+# Flat per-kWh import adder (greenpower), c/kWh.
+usage_other_c_per_kwh:
+  greenpower: 5.5
+
+# Daily charge, c/day.
+daily_charges_c_per_day:
+  supply: 151.46

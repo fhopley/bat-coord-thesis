@@ -1,0 +1,32 @@
+# Sensitivity run - VPP control window 15 minutes
+# full_run_optimised_origin_lite.yaml restricted to NSW 2024, 20 kWh only, with the 15-minute event window tariff.
+# Specification: docs/sensitivity_runs_spec.md
+#
+# Run command (from the project root):
+#   python3 -u -m model.main model/configs/sensitivity/sens_w15min_optimised_origin_lite.yaml --save-flows --workers 6 2>&1 | tee logs/sens_w15min_optimised_origin_lite_$(date +%Y%m%d_%H%M%S).log
+#
+# Output: data/output/runs/sens_w15min_optimised_origin_lite/scenarios/NSW_2024_{size}kWh/
+
+name: sens_w15min_optimised_origin_lite
+
+states: [NSW]
+years: [2024]
+
+cohort: solar_battery
+coordination_type: vpp_tou_event
+export_limit_kw_per_phase: 10.0
+
+network_tariff_ids:
+  NSW: {2024: NSW_ausgrid_ea025_ea029_2026}
+retail_tariff_ids:
+  NSW: {2024: NSW_origin_battery_lite_vpp_2026_w15min}
+op_retail_tariff_id: NSW_operator_wholesale_2026
+
+battery_specs:
+  - name: 20kWh
+    capacity_kwh: 20.0
+    backup_reserve_pct: 20.0
+    power_kw: 10.0
+    charge_efficiency: 0.95
+    discharge_efficiency: 0.95
+    c_deg_per_kwh: 0.039

@@ -1,0 +1,23 @@
+tariff_class: retail
+type: tou
+name: Origin Everyday TOU 2026
+state: NSW
+
+# Sources
+# https://www.originenergy.com.au/
+
+# usage_tariffs must tile [0, 24).
+usage_tariffs:
+  - [0,  15, 22.59]
+  - [15, 21, 56.53]
+  - [21, 24, 22.59]
+  
+# feedin_tariffs must tile [0, 24).
+feedin_tariffs:
+  - [0,  24, 3.0]
+
+usage_other_c_per_kwh:
+  greenpower: 4.5   # Based on Origin Energy published greenpower rates https://www.originenergy.com.au/electricity-gas/greenpower/
+  
+daily_charges_c_per_day:
+  supply: 165.75

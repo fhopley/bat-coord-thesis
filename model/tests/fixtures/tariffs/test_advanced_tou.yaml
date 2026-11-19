@@ -1,0 +1,56 @@
+tariff_class: retail
+type: tou
+name: Test Advanced TOU
+state: NSW
+
+# usage_tariffs must tile [0, 24).
+# The 7-15 window has a non-zero rate so the loader warns about the block override.
+usage_tariffs:
+  - [0,  7,  12.0]
+  - [7,  15, 20.0]
+  - [15, 22, 45.0]
+  - [22, 24, 12.0]
+
+feedin_tariffs:
+  - [0, 24, 5.0]
+
+usage_other_c_per_kwh:
+  greenpower: 3.0
+
+feedin_other_c_per_kwh: {}
+
+daily_charges_c_per_day:
+  supply: 110.0
+
+block_import_tiers:
+  - start_hour: 7
+    end_hour: 15
+    applies_weekends: true
+    tiers:
+      - threshold_kwh: 50.0
+        rate_c_per_kwh: 2.0
+      - threshold_kwh: .inf
+        rate_c_per_kwh: 18.0
+
+block_export_tiers:
+  - start_hour: 15
+    end_hour: 21
+    tiers:
+      - threshold_kwh: 15.0
+        rate_c_per_kwh: 25.0
+      - threshold_kwh: .inf
+        rate_c_per_kwh: 8.0
+
+zero_import_reward:
+  start_hour: 7
+  end_hour: 9
+  reward_c_per_day: 100.0
+  tolerance_kwh_per_hour: 0.03
+
+critical_export_rate:
+  threshold_dollars_per_mwh: 300.0
+  rate_c_per_kwh: 15.0
+
+critical_import_rate:
+  threshold_dollars_per_mwh: -50.0
+  rate_c_per_kwh: -10.0

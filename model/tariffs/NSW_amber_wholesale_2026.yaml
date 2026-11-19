@@ -1,0 +1,37 @@
+# Amber wholesale-exposed retail plan (2026)
+# Reference: Amber bill components.
+#
+# tariff_class: retail, type: wholesale_exposed
+# The customer pays the wholesale spot price directly (captured in the
+# wholesale layer, using the loss factors from the paired network tariff),
+# plus the flat per-kWh cost-recovery adders below, plus the daily
+# subscription. No time-of-use period rates. Network charges come from the
+# separately-specified network tariff.
+#
+# Note: normal retailers do not expose this cost-recovery breakdown; Amber
+# does. All values GST-inclusive.
+
+tariff_class: retail
+type: wholesale_exposed
+name: Amber wholesale 2026
+state: NSW
+
+# GST on the spot energy charge of imports (negative prices too); exports GST-free.
+gst_on_wholesale_import: true
+
+# Flat per-kWh import adders, c/kWh inc GST. Source values were in $/kWh
+# incl-GST values from annual price adjustment breakdown
+usage_other_c_per_kwh:
+  environmental: 1.11     
+  greenpower: 0.821        
+  hedging: 1.100           
+  market_operator: 1.05  
+
+# Flat per-kWh feedin adjustment, c/kWh. None specified for this plan now
+# that loss factors are handled explicitly via the network tariff.
+feedin_other_c_per_kwh: {}
+
+# Daily charges, c/day inc GST. Amber subscription $25/month incl GST.
+# 2500 c/month * 12 / 365 = 82.1918 c/day.
+daily_charges_c_per_day:
+  subscription: 82.1918

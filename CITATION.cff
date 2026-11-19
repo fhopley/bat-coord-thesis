@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: >-
+  If you use this code, please cite the thesis below. The thesis was
+  supervised by Anna Bruce and Iain MacGill at the Collaboration on Energy
+  and Environmental Markets (CEEM), UNSW Sydney.
+title: "Retail Models for Increased Consumer Energy Resource Flexibility: code"
+type: software
+authors:
+  - family-names: Hopley
+    given-names: Fred
+    affiliation: UNSW Sydney
+license: MIT
+repository-code: "https://github.com/fhopley/bat-coord-thesis"
+keywords:
+  - home batteries
+  - virtual power plants
+  - National Electricity Market
+  - electricity retail
+  - linear programming
+preferred-citation:
+  type: thesis
+  thesis-type: "Master of Engineering thesis"
+  title: "Retail Models for Increased Consumer Energy Resource Flexibility"
+  authors:
+    - family-names: Hopley
+      given-names: Fred
+  institution:
+    name: UNSW Sydney
+    city: Sydney
+    country: AU
+  year: 2026

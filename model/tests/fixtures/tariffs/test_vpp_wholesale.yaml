@@ -1,0 +1,26 @@
+# Wholesale-exposed household plan that DOES carry a vpp block.
+# Exists so the rolling_vpp_tou_event "household plan must be TOU" rule can be
+# tested in isolation: against a plan with no vpp block the earlier
+# vpp-block rule fires first and the TOU rule is never reached.
+tariff_class: retail
+type: wholesale_exposed
+name: Test VPP Wholesale
+state: NSW
+gst_on_wholesale_import: false
+
+usage_other_c_per_kwh:
+  market: 2.0
+feedin_other_c_per_kwh: {}
+
+daily_charges_c_per_day:
+  subscription: 80.0
+
+vpp:
+  exp_reward_c_per_kwh: 100.0
+  imp_reward_c_per_kwh: 100.0
+  kwh_limit: 250.0
+  limit_applies_to: import_and_export
+  default_mode: self_consumption
+  event_window_hours: 10.0
+  vpp_threshold_dollars_per_mwh: 1000.0
+  min_export_price_dollars_per_mwh: 500.0

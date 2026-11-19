@@ -1,0 +1,12 @@
+# Counterfactual example: no CER (no solar, no battery) - just billing
+# the underlying household load at the network and retail tariffs.
+
+name: example_no_cer
+
+states: [NSW]
+years: [2022]
+
+cohort: no_cer
+
+network_tariff_id: ausgrid_ea025_network_2024
+retail_tariff_id: powershop_tou_2024

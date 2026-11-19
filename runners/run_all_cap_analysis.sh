@@ -1,0 +1,176 @@
+#!/usr/bin/env bash
+# Runs from the project root wherever it is started from.
+cd "$(dirname "$0")/.."
+# run the following if creating new .sh files 
+#   chmod +x runners/run_all_cap_analysis.sh
+# to run file use
+#   ./runners/run_all_cap_analysis.sh
+
+# Stop on the first failure.
+set -euo pipefail
+
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period interval --threshold-per-mwh 150 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2025
+# python3 analysis/scripts/cap_account_aggregate.py --data-root "/Volumes/Manual/Thesis Project" --battery-name 20kWh --results-root analysis/output/cap_account/full_run_rolling_amber --variant cohort_x150_interval_s0.01
+
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period daily --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2025
+# python3 analysis/scripts/cap_account_aggregate.py --data-root "/Volumes/Manual/Thesis Project" --battery-name 20kWh --results-root analysis/output/cap_account/full_run_rolling_amber --variant cohort_x300_daily_s0.01
+
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state NSW --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state QLD --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state SA --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer cohort --settlement-period monthly --threshold-per-mwh 300 --surcharge-rate-per-kwh 0.01 --battery-name 20kWh --state VIC --year 2025
+# python3 analysis/scripts/cap_account_aggregate.py --data-root "/Volumes/Manual/Thesis Project" --battery-name 20kWh --results-root analysis/output/cap_account/full_run_rolling_amber --variant cohort_x300_monthly_s0.01
+
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.6 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2025
+# python3 analysis/scripts/cap_account_aggregate.py --data-root "/Volumes/Manual/Thesis Project" --battery-name 20kWh --results-root analysis/output/cap_account/full_run_rolling_amber --variant retailer_x300_monthly_a0.6 --subscription-change-per-month -25
+
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period monthly --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2025
+# python3 analysis/scripts/cap_account_aggregate.py --data-root "/Volumes/Manual/Thesis Project" --battery-name 20kWh --results-root analysis/output/cap_account/full_run_rolling_amber --variant retailer_x300_monthly_a0.9 --subscription-change-per-month -5.79
+
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state NSW --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state QLD --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state SA --year 2025
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2021
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2022
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2023
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2024
+# python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer retailer --settlement-period daily --share-fraction 0.9 --threshold-per-mwh 300 --battery-name 20kWh --state VIC --year 2025
+# python3 analysis/scripts/cap_account_aggregate.py --data-root "/Volumes/Manual/Thesis Project" --battery-name 20kWh --results-root analysis/output/cap_account/full_run_rolling_amber --variant retailer_x300_daily_a0.9 --subscription-change-per-month -5.16
+
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state NSW --year 2021
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state NSW --year 2022
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state NSW --year 2023
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state NSW --year 2024
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state NSW --year 2025
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state QLD --year 2021
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state QLD --year 2022
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state QLD --year 2023
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state QLD --year 2024
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state QLD --year 2025
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state SA --year 2021
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state SA --year 2022
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state SA --year 2023
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state SA --year 2024
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state SA --year 2025
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state VIC --year 2021
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state VIC --year 2022
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state VIC --year 2023
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state VIC --year 2024
+python3 analysis/scripts/cap_account_analysis.py --data-root "/Volumes/Manual/Thesis Project" --offer dynamic --battery-name 20kWh --state VIC --year 2025
+python3 analysis/scripts/cap_account_aggregate.py --data-root "/Volumes/Manual/Thesis Project" --battery-name 20kWh --variant dynamic_tesla_electric_mixed_2026_modelled
+
+python3 analysis/scripts/cap_account_retailer.py --battery-name 20kWh --threshold-per-mwh 300 --subscription-change auto --dynamic dynamic_tesla_electric_mixed_2026_modelled
+
+# python3 analysis/scripts/cap_account_retailer.py --battery-name 20kWh --threshold-per-mwh 150 --subscription-change auto --dynamic dynamic_tesla_electric_mixed_2026_modelled
+# python3 analysis/scripts/cap_account_retailer.py --battery-name 20kWh --threshold-per-mwh 300 --subscription-change retailer_x300_daily_a0.9=-5.4 retailer_x300_monthly_a0.6=-25 retailer_x300_monthly_a0.9=-6 --dynamic dynamic_tesla_electric_mixed_2026_modelled
+# python3 analysis/scripts/cap_account_retailer.py --battery-name 25kWh --threshold-per-mwh 300 --subscription-change retailer_x300_daily_a0.9=-6.57 retailer_x300_monthly_a0.65=-25 retailer_x300_monthly_a0.9=-6.9 --dynamic dynamic_tesla_electric_mixed_2026_modelled
+
+# python3 analysis/scripts/cap_account_retailer.py --battery-name 20kWh --threshold-per-mwh 150 --subscription-change retailer_x150_daily_a0.95=-1 retailer_x150_monthly_a0.66=-25 retailer_x150_monthly_a0.95=-2.8 
+# python3 analysis/scripts/cap_account_retailer.py --battery-name 10kWh --threshold-per-mwh 300 --subscription-change retailer_x300_daily_a0.67=-5.4 retailer_x300_monthly_a0=-23 retailer_x300_monthly_a0.67=-6 
+# python3 analysis/scripts/cap_account_retailer.py --battery-name 5kWh --threshold-per-mwh 300 --subscription-change retailer_x300_daily_a0.1=-1.4 retailer_x300_monthly_a0=-2.4 retailer_x300_monthly_a0.1=-1.6 
+# python3 analysis/scripts/cap_account_retailer.py --battery-name 20kWh --threshold-per-mwh 300 --subscription-change retailer_x300_daily_a0.9=-5.4 retailer_x300_monthly_a0.6=-25 retailer_x300_monthly_a0.9=-6 --dynamic dynamic_tesla_electric_mixed_2026_modelled
+# python3 analysis/scripts/cap_account_retailer.py --battery-name 20kWh --threshold-per-mwh 150 --subscription-change retailer_x150_daily_a0.9=-5 retailer_x150_monthly_a0.66=-25 retailer_x150_monthly_a0.9=-6.7 --dynamic dynamic_tesla_electric_mixed_2026_modelled

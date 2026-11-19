@@ -1,0 +1,19 @@
+tariff_class: retail
+type: tou
+name: Test Advanced TOU No Tolerance
+state: NSW
+
+usage_tariffs:
+  - [0, 24, 20.0]
+
+feedin_tariffs:
+  - [0, 24, 5.0]
+
+daily_charges_c_per_day:
+  supply: 110.0
+
+zero_import_reward:
+  start_hour: 7
+  end_hour: 9
+  reward_c_per_day: 100.0
+  # tolerance_kwh_per_hour omitted -- should default to 0.0

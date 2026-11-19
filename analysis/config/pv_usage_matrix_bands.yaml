@@ -1,0 +1,15 @@
+# PV array size bands for pv_usage_matrix.py.
+#
+# Separate from pv_size_bands.yaml, whose four bands are tied one-for-one to
+# the per-state population weights alongside them and cannot be added to
+# without changing the weighted results in financial_analysis.  The matrix
+# does not use those weights (every site-year in a cell is in the same band,
+# so a band weight cannot change a cell mean), so it is free to band the
+# population differently.
+#
+# The outer bands are open: the first takes everything up to its upper bound
+# and the last everything above its lower bound, so the matrix covers the
+# whole modelled population and the margins are the full base.  A bound at or
+# above 900 marks the last band open.  Bounds are inclusive at the lower
+# band, so a site at exactly 6.5 kW sits in 4.5-6.5.
+size_bands: ["0-4.5", "4.5-6.5", "6.5-9.5", "9.5-14", "14-999"]

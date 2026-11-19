@@ -1,0 +1,28 @@
+tariff_class: retail
+type: wholesale_exposed
+name: Operator Wholesale 2026
+state: NSW
+
+# Operator-side exposure: GST-exclusive.
+gst_on_wholesale_import: false
+
+# Operator-side price exposure for VPP dispatch.
+#
+# This tariff represents the costs and revenues the operator faces when
+# dispatching household batteries during VPP events. The operator sees:
+#   - NEM wholesale spot price (via the wholesale_exposed type)
+#   - Network charges (via the network tariff passed to build_price_vectors)
+#   - Zero retail adders (the operator has no retail margin on these flows)
+#   - Zero daily charges (no per-day cost structure for the operator)
+#
+# Used as op_retail_tariff_id in VPP ScenarioConfig. build_price_vectors
+# with type='wholesale_exposed' and zero adders returns:
+#   op_p_imp = spot_price * import_loss_factor / 1000 + network_import_rate
+#   op_p_exp = spot_price * export_loss_factor / 1000 + network_export_rate
+# which is the operator's true wholesale + network exposure, loss-adjusted.
+
+daily_charges_c_per_day:
+  placeholder: 0.0  # daily_charges_c_per_day must be a non-empty mapping; operator has none
+
+# No usage_tariffs or feedin_tariffs for wholesale_exposed (energy charged via wholesale layer).
+# No usage_other or feedin_other (operator has no retail adders).

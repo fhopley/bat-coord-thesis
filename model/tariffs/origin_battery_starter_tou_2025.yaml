@@ -1,0 +1,26 @@
+tariff_class: retail
+type: tou
+name: Origin Battery Starter TOU 2025
+state: NSW
+
+# Sources
+# https://www.originenergy.com.au/solar/battery-plans/starter/?planfuel=Elec
+
+# usage_tariffs must tile [0, 24).
+usage_tariffs:
+  - [0,  17, 33.0]
+  - [17, 21, 57.31]
+  - [21, 24, 33.0]
+  
+
+# feedin_tariffs must tile [0, 24).
+feedin_tariffs:
+  - [0,  17, 5.0]
+  - [17, 21, 18.0]
+  - [21, 24, 5.0]
+
+usage_other_c_per_kwh:
+  greenpower: 4.5   # Based on Origin Energy published greenpower rates https://www.originenergy.com.au/electricity-gas/greenpower/
+
+daily_charges_c_per_day:
+  supply: 125.67

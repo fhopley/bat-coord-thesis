@@ -1,0 +1,22 @@
+tariff_class: retail
+type: tou
+name: Test Advanced TOU Non-Convex Import
+state: NSW
+
+usage_tariffs:
+  - [0, 24, 20.0]
+
+feedin_tariffs:
+  - [0, 24, 5.0]
+
+daily_charges_c_per_day:
+  supply: 110.0
+
+block_import_tiers:
+  - start_hour: 7
+    end_hour: 15
+    tiers:
+      - threshold_kwh: 50.0
+        rate_c_per_kwh: 18.0   # expensive first -- non-convex, should raise
+      - threshold_kwh: .inf
+        rate_c_per_kwh: 2.0

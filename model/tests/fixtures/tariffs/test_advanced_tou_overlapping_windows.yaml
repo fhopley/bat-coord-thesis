@@ -1,0 +1,29 @@
+tariff_class: retail
+type: tou
+name: Test Advanced TOU Overlapping Windows
+state: NSW
+
+usage_tariffs:
+  - [0, 24, 20.0]
+
+feedin_tariffs:
+  - [0, 24, 5.0]
+
+daily_charges_c_per_day:
+  supply: 110.0
+
+block_import_tiers:
+  - start_hour: 0
+    end_hour: 10
+    tiers:
+      - threshold_kwh: 50.0
+        rate_c_per_kwh: 2.0
+      - threshold_kwh: .inf
+        rate_c_per_kwh: 18.0
+  - start_hour: 8     # overlaps with [0, 10)
+    end_hour: 15
+    tiers:
+      - threshold_kwh: 30.0
+        rate_c_per_kwh: 3.0
+      - threshold_kwh: .inf
+        rate_c_per_kwh: 20.0

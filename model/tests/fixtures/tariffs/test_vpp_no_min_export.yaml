@@ -1,0 +1,37 @@
+# VPP retail tariff WITHOUT min_export_price_dollars_per_mwh and without
+# min_export_price_mode, so the mode defaults to 'fixed' with nothing to use.
+# Rejected on ALL FOUR VPP coordination types.
+#
+# This combination used to mean "derive the threshold from the run year's own
+# prices" by implication, and was valid on the perfect-foresight types. It now
+# fails rather than resolving to something different from what it once meant;
+# a tariff wanting the old behaviour states
+# min_export_price_mode: based_on_this_year explicitly.
+tariff_class: retail
+type: tou
+name: Test VPP No Min Export
+state: NSW
+
+usage_tariffs:
+  - [0,  15, 20.0]
+  - [15, 23, 55.0]
+  - [23, 24, 20.0]
+
+feedin_tariffs:
+  - [0,  17,  4.0]
+  - [17, 21, 29.0]
+  - [21, 24,  4.0]
+
+usage_other_c_per_kwh: {}
+
+daily_charges_c_per_day:
+  supply: 130.0
+
+vpp:
+  exp_reward_c_per_kwh: 100.0
+  imp_reward_c_per_kwh: 100.0
+  kwh_limit: 250.0
+  limit_applies_to: import_and_export
+  default_mode: self_consumption
+  event_window_hours: 10.0
+  vpp_threshold_dollars_per_mwh: 1000.0

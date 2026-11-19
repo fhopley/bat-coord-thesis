@@ -1,0 +1,50 @@
+# All prices in this file are provisional until Tesla finalises the plan's rates.
+#
+# Tesla Electric Dynamic retail plan (2026)
+# Sensitivity variant: the share applies to spot plus the network export tariff.
+# Otherwise identical to NSW_tesla_electric_mixed_2026.yaml.
+# Reference: Online quote for Tesla Electric Dynamic plan, 2026.
+#
+# tariff_class: retail, type: mixed
+# Imports are billed at time-of-use rates that bundle energy and network
+# charges. Exports are credited wholesale_export_share of the export value
+# set by export_share_basis, floored at export_floor_c_per_kwh in every
+# 5-minute interval. On this plan the share applies to spot x export loss
+# factor only, and the floor is zero. The separately-specified network
+# tariff still supplies the loss factors, the network import cost and daily
+# charge, and the network export tariff, all borne by the retailer.
+#
+# All values GST-inclusive.
+
+tariff_class: retail
+type: mixed
+name: Tesla Electric Dynamic 2026 (netshare)
+state: NSW
+
+# usage_tariffs must tile [0, 24).
+usage_tariffs:
+  - [0,  15, 24.02]
+  - [15, 21, 49.71]
+  - [21, 24, 24.02]
+
+# Flat per-kWh import adders, c/kWh inc GST. Greenpower assumption from Amber
+usage_other_c_per_kwh: 
+  greenpower: 0.821          
+
+# Flat per-kWh feedin adjustment, c/kWh. None specified for this plan
+feedin_other_c_per_kwh: {}
+
+# Daily charges, c/day inc GST. 
+daily_charges_c_per_day:
+  subscription: 110.0
+
+# Share of the export value credited to the household.
+wholesale_export_share: 0.9
+
+# Export value the share applies to. 'wholesale': spot x export loss factor.
+# 'wholesale_and_network': that plus the loss-adjusted network export tariff.
+export_share_basis: wholesale_and_network
+
+# Floor on the household's export credit rate (share x value), c/kWh,
+# applied every interval. null for no floor.
+export_floor_c_per_kwh: 0.0

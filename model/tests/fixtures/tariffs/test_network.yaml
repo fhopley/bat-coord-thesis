@@ -1,0 +1,21 @@
+# Minimal test network tariff with round-number rates and loss factors.
+tariff_class: network
+name: Test Network
+state: NSW
+
+usage_tariffs:
+  - [0,  8,  5.0]
+  - [8,  18, 15.0]
+  - [18, 24, 8.0]
+
+feedin_tariffs:
+  - [0, 24, -1.0]
+
+daily_charges_c_per_day:
+  access: 40.0
+  metering: 10.0
+
+usage_dlf: 1.05
+export_dlf: 0.95
+import_tlf: 1.01
+export_tlf: 1.01
