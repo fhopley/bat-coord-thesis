@@ -130,7 +130,8 @@ class TableReport:
         usable forecast, which is a different and much narrower failure.
         See known_gap for the archive-confirmed-absent case, which is
         independent of this and does not require max_lead_minutes to be 0
-        (October 2022's single surviving run has a perfectly normal lead).
+        (October 2022's surviving runs, 00:00 to 04:00 on the 1st from
+        September's source file, have perfectly normal leads).
         """
         return self.n_runs > 0 and self.max_lead_minutes == 0
 
@@ -238,6 +239,26 @@ def validate_partition(store_root: Path, table: str, region: str,
     return rep
 
 
+def known_gap_report(table: str, region: str,
+                     period: pd.Period) -> TableReport:
+    """Report for a known archive gap that has no partition on disk.
+
+    Stage B writes a short partition for a known gap whenever the previous
+    month's source file is cached, because that file holds the gap month's
+    leading runs. When it is not cached there is no partition at all, and a
+    walk over the partitions on disk would leave the month out of the manifest
+    entirely. The forecast provider applies on_degraded_period only to months
+    the manifest flags, so an omitted gap would silently bypass that policy.
+    """
+    spec = TABLE_SPEC[table]
+    cadence = pd.Timedelta(minutes=spec['run_cadence_minutes'])
+    grid = pd.date_range(period.to_timestamp(),
+                         (period + 1).to_timestamp() - cadence, freq=cadence)
+    return TableReport(table=table, region=region, period=str(period),
+                       n_runs=0, n_rows=0, expected_runs=len(grid),
+                       n_missing_trailing=len(grid))
+
+
 def validate_store(store_root: Path, tables=('p5min', 'predispatch'),
                    regions=('NSW1', 'QLD1', 'SA1', 'TAS1', 'VIC1'),
                    start: str | None = None, end: str | None = None,
@@ -251,12 +272,25 @@ def validate_store(store_root: Path, tables=('p5min', 'predispatch'),
                 continue
             periods = sorted(pd.Period(p.stem[:4] + '-' + p.stem[4:], freq='M')
                              for p in region_dir.glob('*.parquet'))
+            # Known gaps inside the span the store covers are reported even
+            # with no partition on disk. Outside that span they are left out,
+            # so a store holding only 2024 does not report a 2022 gap.
+            absent_gaps = set()
+            if periods:
+                for (gap_table, gap_period) in KNOWN_ARCHIVE_GAPS:
+                    gp = pd.Period(gap_period, freq='M')
+                    if (gap_table == table and periods[0] < gp < periods[-1]
+                            and gp not in periods):
+                        absent_gaps.add(gp)
+                periods = sorted(set(periods) | absent_gaps)
             if start:
                 periods = [p for p in periods if p >= pd.Period(start, freq='M')]
             if end:
                 periods = [p for p in periods if p <= pd.Period(end, freq='M')]
             for period in periods:
-                rep = validate_partition(store_root, table, region, period)
+                rep = (known_gap_report(table, region, period)
+                       if period in absent_gaps else
+                       validate_partition(store_root, table, region, period))
                 reports.append(rep)
                 if verbose:
                     flag = ('GAP ' if rep.known_gap

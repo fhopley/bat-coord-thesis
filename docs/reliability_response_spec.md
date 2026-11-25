@@ -27,6 +27,23 @@ charts in optimised mode on the achievable imperfect-foresight basis
 | Energy Australia | `full_run_rolling_ea` | 20 kWh, NSW only |
 | Origin Battery Lite | `full_run_rolling_origin` | 20 kWh |
 
+With `--with-conservative`, each offer's conservative run is added
+(`fe.plans_for_basis('conservative')`, the plan's `lp_dir`):
+
+| Offer | Conservative run directory | Conservative case |
+|---|---|---|
+| Amber | `full_run_rolling_amber_predispatchonly` | Pre-dispatch price forecasts only |
+| GloBird | `full_run_rolling_globird_novpp` | No critical rates |
+| AGL | `full_run_rolling_agl_novpp` | No VPP events |
+| Energy Australia | `full_run_rolling_ea_novpp` | No VPP events |
+| Origin Battery Lite | `full_run_rolling_origin_novpp` | No VPP events |
+
+These are the conservative imperfect-foresight runs of
+`financial_analysis.PLAN_RUNS`, labelled `<offer> (conservative)`. The
+range from conservative to achievable therefore spans both forecast
+quality (Amber) and whether a VPP or critical rate is called during the
+stress interval (the other offers).
+
 Labels, colours, hatching and state exclusions come from
 `flow_exposure_analysis.py` and `financial_analysis.py`, so they have one
 home. The line chart legends name Self Consumption (Amber) as
@@ -89,6 +106,30 @@ selected intervals, renormalised over those states
 (`fe._state_mix_weighted_average`). The mean RRP note is formed the same
 way. This is the per-state multi-year and national tier of
 `flow_exposure_analysis.py`, applied to the new selection.
+
+### Conservative range
+
+With `--with-conservative`, every output is written with a `_range` suffix
+beside the achievable-only version, so either can be drawn from the same
+cache. The titles end in ", imperfect foresight", the basis being carried
+by the bar legend and the line labels.
+
+- **Bars** (`fig_range_bar`): each offer's solid bar runs from zero to its
+  conservative value, and a segment in the offer colour tinted towards
+  white (`sbf.RANGE_TINT`) runs from the conservative to the achievable
+  value, as in `savings_bar_figure.py`. The segment is drawn under the
+  solid bar, so a conservative import stays visible when the achievable
+  value is an export. Bars are labelled with the achievable value only.
+  The legend adds `sbf.RANGE_LABEL`. Scenarios without a conservative run
+  (No CER, Solar Only, Self Consumption) are single bars.
+- **Flow duration and response**: the core charts add the conservative
+  Amber line, dotted in the Amber colour, with the two Amber lines
+  labelled "(achievable)" and "(conservative)". On the core flow duration
+  chart the legend moves below the axes in two columns, since the
+  conservative curve fills the lower left. The `_all` flow duration chart
+  stays achievable only.
+- **CSVs**: the conservative scenarios are added as rows of
+  `interval_summary_range.csv` and as columns of `events_range.csv`.
 
 ### Flow duration (equal width)
 
@@ -182,6 +223,7 @@ python3 analysis/scripts/reliability_response_analysis.py --charts-only --mpc-of
 | `--charts-only` | off | Draw from the cache without reading flows; state-years are those in the cache |
 | `--extract-only` | off | Build the cache and stop |
 | `--no-notes` | notes on | Leave the data notes off the charts, for the thesis |
+| `--with-conservative` | off | Add the conservative runs; outputs named `*_range` |
 
 ### Stages
 
@@ -191,7 +233,8 @@ the rows within `CONTEXT_HOURS` of any interval with `rrp > EXTRACT_FLOOR`
 are written to `<output-dir>/cache/<run_dir>/<state>_<year>.parquet` with
 columns `datetime_aest`, `rrp`, `net_kw`, `share_importing`. An existing
 cache file is not rebuilt, so the extract can be run in pieces
-(`--states`, `--years`). To rebuild, delete the cache file.
+(`--states`, `--years`), and adding `--with-conservative` later reads only
+the conservative runs. To rebuild, delete the cache file.
 
 **Charts.** For each selection, into `<output-dir>/<folder>/`, where
 `<folder>` is `MPC` (x = 0), `MPC-<x>` or `T<threshold>`:
@@ -274,3 +317,5 @@ achievable runs:
   importing). The cohort sits near household load (about +1.25 kW) in the
   three intervals before it, after exporting 8.7 kW at 09:10 to 09:15,
   consistent with an empty battery; not confirmed (see Known limitations).
+- MPC − 1,000, conservative runs: Amber −4.87 kW, GloBird −0.53 kW, AGL
+  +0.37 kW, Origin +0.83 kW.

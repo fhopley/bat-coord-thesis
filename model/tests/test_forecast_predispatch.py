@@ -370,9 +370,10 @@ def test_degraded_period_infill_does_not_construct_specially(tmp_path):
 
 def test_known_archive_gap_raises_even_without_lead0_degradation(tmp_path,
                                                                    monkeypatch):
-    """October 2022's actual shape: a single surviving run with a perfectly
-    ordinary lead (so max_lead_minutes != 0, and the lead-0-only 'degraded'
-    check alone does NOT catch it) but confirmed absent from the archive.
+    """October 2022's actual shape: a few surviving leading runs with
+    perfectly ordinary leads (so max_lead_minutes != 0, and the lead-0-only
+    'degraded' check alone does NOT catch it) but confirmed absent from the
+    archive.
     known_archive_gap is the signal that catches this one; it must be
     sufficient on its own, independent of 'degraded'."""
     a = _actuals()

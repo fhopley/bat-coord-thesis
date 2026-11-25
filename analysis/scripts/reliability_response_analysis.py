@@ -62,6 +62,7 @@ import argparse
 import sys
 from pathlib import Path
 
+import matplotlib.patches as mpatches
 import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
@@ -69,6 +70,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).parent))
 import financial_analysis as fa
 import flow_exposure_analysis as fe
+import savings_bar_figure as sbf
 import thesis_style as ts
 from financial_analysis import load_weights_config
 from flow_exposure_analysis import (
@@ -86,6 +88,11 @@ DEFAULT_MPC_OFFSETS = (0, 1000)
 HEIGHT_IN = 3.0
 DOLLAR = '\\$'
 BASIS_SUFFIX = f", {fa.RUN_BASES[BASIS]['title']}"
+# With --with-conservative: the basis is carried by the bar legend and the
+# line labels, so the titles keep their length.
+CONSERVATIVE = 'conservative'
+RANGE_SUFFIX = ', imperfect foresight'
+RANGE_STEM = '_range'
 CORE_LABELS = ('No CER (load only)', 'Solar Only', 'Self Consumption (Amber)', 'Amber')
 REFERENCE_LABELS = CORE_LABELS[:3]
 # Market price cap by financial year (starting 1 July of the key year), $/MWh.
@@ -93,16 +100,31 @@ MPC_BY_FY = {2020: 15000, 2021: 15100, 2022: 15500, 2023: 16600, 2024: 17500,
              2025: 20300}
 
 
-def scenario_list() -> list[dict]:
+def scenario_list(with_conservative: bool = False) -> list[dict]:
     """The event exposure bars of flow_exposure_analysis.py in optimised mode
-    on the achievable basis: label, colour, run_dir, hatch, plus has_battery
-    and line style for the duration and response charts."""
+    on the achievable basis: label, colour, run_dir, hatch, plus has_battery,
+    line style, basis, the states left out and a label tag for the duration
+    and response charts. With with_conservative, each offer's conservative
+    run follows, labelled '<offer> (conservative)', with 'of' naming the
+    achievable scenario it pairs with."""
     fe.set_basis(BASIS)
+    plans = {p['label']: p for p in fe.COORDINATION_PLANS}
     out = []
     for label, colour, run_dir, hatch in fe._bar_order(MODE):
+        plan = plans.get(label) if label not in REFERENCE_LABELS else None
         out.append(dict(label=label, color=colour, run_dir=run_dir, hatch=hatch,
                         has_battery=label not in REFERENCE_LABELS[:2],
-                        ls='-' if label in REFERENCE_LABELS else '--'))
+                        ls='-' if label in REFERENCE_LABELS else '--', basis=BASIS,
+                        excluded=fe._excluded_states(plan) if plan else set(),
+                        tag=' (achievable)' if plan and with_conservative else ''))
+    if with_conservative:
+        cons = {p['label']: p for p in fe.plans_for_basis(CONSERVATIVE)}
+        for sc in list(out):
+            if sc['label'] in REFERENCE_LABELS or sc['label'] not in cons:
+                continue
+            out.append(dict(sc, label=f"{sc['label']} ({CONSERVATIVE})", of=sc['label'],
+                            run_dir=cons[sc['label']]['lp_dir'], ls=':',
+                            basis=CONSERVATIVE, tag=f' ({CONSERVATIVE})'))
     return out
 
 
@@ -112,9 +134,11 @@ def _fmt_dollars(t: float) -> str:
 
 def _name(sc: dict, battery_kwh: int) -> str:
     # Only one self-consumption scenario is shown, so it needs no offer name.
-    name = (fe.SELF_CONSUMPTION_NAME if sc['label'] == 'Self Consumption (Amber)'
-            else fe._display_name(sc['label']))
-    return f'{name}, {battery_kwh} kWh' if sc['has_battery'] else name
+    label = sc.get('of', sc['label'])
+    name = (fe.SELF_CONSUMPTION_NAME if label == 'Self Consumption (Amber)'
+            else fe._display_name(label))
+    name = f'{name}, {battery_kwh} kWh' if sc['has_battery'] else name
+    return name + sc['tag']
 
 
 def _minus(text: str) -> str:
@@ -192,7 +216,7 @@ def extract(data_root: Path, cache_dir: Path, scenarios: list[tuple[str, str]],
     rows = []
     for sc in scen_list:
         for state, year in scenarios:
-            if fe.run_excluded(sc['run_dir'], state):
+            if state in sc['excluded']:
                 continue
             out = _cache_path(cache_dir, sc['run_dir'], state, year)
             if out.exists():
@@ -236,7 +260,7 @@ def load_cache(cache_dir: Path, scen_list: list[dict],
     data, missing = {}, []
     for sc in scen_list:
         for state, year in scenarios:
-            if fe.run_excluded(sc['run_dir'], state):
+            if state in sc['excluded']:
                 continue
             p = _cache_path(cache_dir, sc['run_dir'], state, year)
             if not p.exists():
@@ -268,6 +292,69 @@ def find_events(rrp: pd.Series, sel: Selection) -> pd.DataFrame:
                          'end': g.groupby(level=0).max()}).reset_index(drop=True)
 
 
+# ── Range bar chart ──────────────────────────────────────────────────────────
+
+def fig_range_bar(stat: dict, scen_list: list[dict], title: str, stem: str,
+                  state: str, year_label: str, battery_kwh: int, out_dir: Path,
+                  notes: bool) -> None:
+    """The event exposure bars of fe.fig_scenario_bar, with each offer's bar
+    running to its conservative value and a tinted segment continuing it to
+    the achievable value, as in savings_bar_figure.py. Bars are labelled
+    with the achievable value only."""
+    cons_run = {sc['of']: sc['run_dir'] for sc in scen_list if sc['basis'] == CONSERVATIVE}
+    bars = []
+    for sc in scen_list:
+        if sc['basis'] != BASIS or sc['run_dir'] not in stat['stats']:
+            continue
+        ach = stat['stats'][sc['run_dir']]['ev']
+        cons = stat['stats'].get(cons_run.get(sc['label']), {}).get('ev')
+        bars.append((sc, cons, ach))
+    if not bars:
+        print(f"  Skipping {stem}: no data.", file=sys.stderr)
+        return
+    mean_rrp = stat['mean_rrp'].get('ev') if stat['mean_rrp'] else None
+    rrp_str = (f'\nMean RRP: {DOLLAR}{mean_rrp:,.0f}/MWh'
+               if mean_rrp is not None and not np.isnan(mean_rrp) else '')
+    note = (f'{state}, {year_label}, {battery_kwh} kWh battery\n'
+            f'{fe._weight_note(True, national=(state == "National"))}{rrp_str}'
+            f'{fe._national_lines(state)}')
+    vals = []
+    with fe._thesis_rc():
+        fig = ts.new_figure(fe.WATERFALL_HEIGHT_IN)
+        ax = fig.subplots()
+        for i, (sc, cons, ach) in enumerate(bars):
+            base = ach if cons is None else cons
+            # The range segment goes under the solid bar, so a conservative
+            # value on the other side of zero from the achievable one stays
+            # visible.
+            if cons is not None and abs(ach - cons) > 1e-4:
+                ax.bar([i], [ach - cons], bottom=[cons], width=fe.BAR_WIDTH, zorder=3,
+                       color=sbf._tint(sc['color'], sbf.RANGE_TINT), linewidth=0)
+            if fe._display_name(sc['label']) == fe.SC_REFERENCE_NAME:
+                for kw in sbf._sc_patches(sc['color']):
+                    ax.bar([i], [base], width=fe.BAR_WIDTH, zorder=3.5, **kw)
+            else:
+                ax.bar([i], [base], width=fe.BAR_WIDTH, zorder=3.5,
+                       **fe._bar_style(sc['hatch'], sc['color']))
+            if abs(ach) > 1e-4:
+                fe._signed_label(ax, i, ach, fe._num2(ach))
+            vals += [v for v in (cons, ach) if v is not None]
+        fe._frame_categories(ax, [fe._tick_label(sc['label']) for sc, _, _ in bars])
+        ax.axhline(0, color=ts.SEPARATOR_COLOUR, lw=0.5, zorder=2)
+        ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _: fe._num2(v)))
+        fe._signed_ylim(ax, vals)
+        ax.set_ylabel('Mean per-site net import (kW)')
+        ax.set_title(title)
+        if notes:
+            fa._draw_notes(ax, note, 'upper right')
+        handles, labels = fe._hatch_legend_handles(MODE)
+        handles.append(mpatches.Patch(color=sbf._tint(sbf.KEY_COLOUR, sbf.RANGE_TINT)))
+        labels.append(sbf.RANGE_LABEL)
+        fig.legend(handles=handles, labels=labels, loc='outside lower center',
+                   ncol=len(handles), frameon=False)
+        ts.save_figure(fig, out_dir / stem)
+
+
 # ── Analysis per threshold ───────────────────────────────────────────────────
 
 def analyse_threshold(sel: Selection, data: dict, scen_list: list[dict],
@@ -276,6 +363,11 @@ def analyse_threshold(sel: Selection, data: dict, scen_list: list[dict],
     out_dir.mkdir(parents=True, exist_ok=True)
     states = sorted({s for s, _ in scenarios})
     labels = [sc['label'] for sc in scen_list]
+    # With conservative runs present, every output is the _range version.
+    ranged = any(sc['basis'] == CONSERVATIVE for sc in scen_list)
+    sfx = RANGE_STEM if ranged else ''
+    suffix = RANGE_SUFFIX if ranged else BASIS_SUFFIX
+    core = CORE_LABELS + ((f'Amber ({CONSERVATIVE})',) if ranged else ())
     ref = 'No CER (load only)'
 
     # Prices per state from the No CER cache (every run shares the grid).
@@ -324,15 +416,16 @@ def analyse_threshold(sel: Selection, data: dict, scen_list: list[dict],
     year_label = f'{years[0]}–{years[-1]}' if len(years) > 1 else years[0]
     # The mode is left out of the title (always optimised here) so it fits
     # the axes width at the longest selection phrase.
-    title = f'Net import in intervals {sel.phrase}{BASIS_SUFFIX}'
+    title = f'Net import in intervals {sel.phrase}{suffix}'
     fe.NATIONAL_NOTE_LINES[:] = fa.restricted_offer_notes(list(per_state))
-    fe.fig_scenario_bar('ev', MODE, title, 'event_exposure_national', 'National',
-                        year_label, national, True, battery_kwh, out_dir,
-                        show_n=False, notes=notes)
-    for state, stat in per_state.items():
-        fe.fig_scenario_bar('ev', MODE, title, f'event_exposure_{state}', state,
-                            year_label, stat, True, battery_kwh, out_dir,
-                            show_n=False, notes=notes)
+    for state, stat in [('National', national)] + list(per_state.items()):
+        stem = f"event_exposure_{'national' if state == 'National' else state}{sfx}"
+        if ranged:
+            fig_range_bar(stat, scen_list, title, stem, state, year_label,
+                          battery_kwh, out_dir, notes)
+        else:
+            fe.fig_scenario_bar('ev', MODE, title, stem, state, year_label, stat,
+                                True, battery_kwh, out_dir, show_n=False, notes=notes)
 
     # Flow duration, equal width: each (state, interval) weighted by
     # state_mix[s] / Y_s as in cap_hedge_analysis.py, so states count by
@@ -340,7 +433,7 @@ def analyse_threshold(sel: Selection, data: dict, scen_list: list[dict],
     curves = {}
     for sc in scen_list:
         st = [s for s in states if any((sc['label'], s, y) in data for _, y in scenarios)]
-        if set(st) != set(per_state) and sc['label'] not in CORE_LABELS:
+        if set(st) != set(per_state) and sc['label'] not in core:
             continue
         ms, ws = [], []
         for s in st:
@@ -357,8 +450,9 @@ def analyse_threshold(sel: Selection, data: dict, scen_list: list[dict],
         x = np.concatenate([[0.0], np.cumsum(w[order]) / w.sum() * 100.0])
         y = np.concatenate([m[order], m[order][-1:]])
         curves[sc['label']] = (x, y)
-    for stem, keep in (('flow_duration_count', CORE_LABELS),
-                       ('flow_duration_count_all', tuple(labels))):
+    for stem, keep in ((f'flow_duration_count{sfx}', core),
+                       (f'flow_duration_count_all{sfx}',
+                        tuple(sc['label'] for sc in scen_list if sc['basis'] == BASIS))):
         fig = ts.new_figure(HEIGHT_IN)
         ax = fig.subplots()
         for sc in scen_list:
@@ -370,12 +464,16 @@ def analyse_threshold(sel: Selection, data: dict, scen_list: list[dict],
         ax.axhline(0, color=ts.SEPARATOR_COLOUR, lw=0.5, zorder=1)
         ax.set_xlim(0, 100)
         ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _: _minus(f'{v:g}')))
-        ax.set_title(f'Cohort net import in intervals {sel.phrase}'
-                     + BASIS_SUFFIX)
+        ax.set_title(f'Cohort net import in intervals {sel.phrase}' + suffix)
         ax.set_xlabel(f'Share of intervals {sel.phrase} (%)')
         ax.set_ylabel('Cohort net import (kW/site)')
-        if keep == CORE_LABELS:
+        if keep == core and not ranged:
             ax.legend(loc='lower left')
+        elif keep == core:
+            # The conservative Amber curve fills the lower left; two columns
+            # below the axes put the two Amber lines side by side.
+            fig.legend(*ax.get_legend_handles_labels(), loc='outside lower center',
+                       ncol=2, frameon=False)
         else:
             # Seven entries do not fit inside the axes clear of the curves.
             fig.legend(*ax.get_legend_handles_labels(), loc='outside lower center',
@@ -422,15 +520,15 @@ def analyse_threshold(sel: Selection, data: dict, scen_list: list[dict],
                 resp[lab].append(s.reindex(idx).to_numpy())
             ev_rows.append(row)
     events = pd.DataFrame(ev_rows).sort_values('start').reset_index(drop=True)
-    events.to_csv(out_dir / 'events.csv', index=False, float_format='%.4g')
-    print(f"  Saved: {out_dir / 'events.csv'} ({len(events)} events)")
+    events.to_csv(out_dir / f'events{sfx}.csv', index=False, float_format='%.4g')
+    print(f"  Saved: {out_dir / f'events{sfx}.csv'} ({len(events)} events)")
 
     # Mean response around event start, events pooled with equal weight.
     fig = ts.new_figure(HEIGHT_IN)
     ax = fig.subplots()
     h = offs * INTERVAL_HOURS
     for sc in scen_list:
-        if sc['label'] not in CORE_LABELS or not resp[sc['label']]:
+        if sc['label'] not in core or not resp[sc['label']]:
             continue
         arr = np.vstack(resp[sc['label']])
         ax.plot(h, np.nanmean(arr, axis=0), color=sc['color'], ls=sc['ls'],
@@ -453,8 +551,7 @@ def analyse_threshold(sel: Selection, data: dict, scen_list: list[dict],
     ax.set_xlim(*RESPONSE_WINDOW_H)
     ax.xaxis.set_major_locator(mticker.MultipleLocator(3))
     ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _: _minus(f'{v:g}')))
-    ax.set_title(f'Cohort net import around events {sel.phrase}'
-                 + BASIS_SUFFIX)
+    ax.set_title(f'Cohort net import around events {sel.phrase}' + suffix)
     ax.set_xlabel('Hours from event start')
     ax.set_ylabel('Mean net import (kW/site)')
     legend = ax.legend(loc='lower left')
@@ -465,7 +562,7 @@ def analyse_threshold(sel: Selection, data: dict, scen_list: list[dict],
         fa._draw_notes(ax, f'{len(events)} events, all states, {year_label}\n'
                            'Each event equal weight; weighted by PV size',
                        'lower left', bottom=top + 0.02)
-    ts.save_figure(fig, out_dir / 'event_response')
+    ts.save_figure(fig, out_dir / f'event_response{sfx}')
 
     # Interval and event summary per scenario (national, as the bars).
     summ = []
@@ -493,8 +590,9 @@ def analyse_threshold(sel: Selection, data: dict, scen_list: list[dict],
             events_with_import=int((evs[col] > 0).sum()) if len(evs) else 0,
             events_mean_import=int((evs[f'{lab} mean kW'] > 0).sum()) if len(evs) else 0))
     summary = pd.DataFrame(summ)
-    summary.to_csv(out_dir / 'interval_summary.csv', index=False, float_format='%.4g')
-    print(f"  Saved: {out_dir / 'interval_summary.csv'}")
+    summary.to_csv(out_dir / f'interval_summary{sfx}.csv', index=False,
+                   float_format='%.4g')
+    print(f"  Saved: {out_dir / f'interval_summary{sfx}.csv'}")
     with pd.option_context('display.width', 200, 'display.max_columns', 20,
                            'display.float_format', '{:.3f}'.format):
         print(summary.drop(columns='run_dir').to_string(index=False))
@@ -507,7 +605,7 @@ def analyse_threshold(sel: Selection, data: dict, scen_list: list[dict],
             ev = find_events(r, sel)
             counts.append(dict(state=state, year=y, intervals=int(sel.mask(r).sum()),
                                events=len(ev)))
-    pd.DataFrame(counts).to_csv(out_dir / 'state_year_counts.csv', index=False)
+    pd.DataFrame(counts).to_csv(out_dir / f'state_year_counts{sfx}.csv', index=False)
 
 
 def main(argv=None):
@@ -533,6 +631,9 @@ def main(argv=None):
                         help='Draw from the cache without reading any flows.')
     parser.add_argument('--extract-only', action='store_true')
     parser.add_argument('--no-notes', dest='notes', action='store_false')
+    parser.add_argument('--with-conservative', action='store_true',
+                        help='Add each offer\'s conservative run: range bars, the '
+                             'conservative Amber line, outputs named *_range.')
     args = parser.parse_args(argv)
 
     selections = ([Selection('mpc', x) for x in args.mpc_offsets]
@@ -543,7 +644,7 @@ def main(argv=None):
         return 1
     ts.apply_style()
     weights_cfg = load_weights_config(args.weights_file)
-    scen_list = scenario_list()
+    scen_list = scenario_list(args.with_conservative)
     cache_dir = args.output_dir / 'cache'
 
     if args.charts_only:

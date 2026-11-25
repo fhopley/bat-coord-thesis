@@ -70,8 +70,9 @@ class PredispatchForecastProvider(_GridProvider):
                                     unaffected and complete, still supplies a
                                     genuine forecast for its own ~55 minute
                                     reach; only the tail beyond that -- which
-                                    the coarse segment's one surviving stub
-                                    run cannot reach into mid-month -- falls
+                                    the coarse segment's surviving 00:00 to
+                                    04:00 runs on the 1st cannot reach into
+                                    mid-month -- falls
                                     to the standard 24-hour-lag infill. This is
                                     the recommended choice for a gap of this
                                     shape: 'actuals' would substitute genuine
@@ -221,8 +222,9 @@ class PredispatchForecastProvider(_GridProvider):
         - `degraded`: a lead-0-only month LOOKS complete from the data alone
           (full run coverage, no gaps, every price present), which is the
           whole trap. Only the manifest distinguishes it.
-        - `known_archive_gap`: October 2022's single surviving run has a
-          perfectly ordinary lead (about 28 hours) -- nothing about ITS OWN
+        - `known_archive_gap`: October 2022's surviving runs (00:00 to 04:00
+          on the 1st, held in September's source file) have perfectly
+          ordinary leads (24 to 28 hours) -- nothing about THEIR OWN
           data marks it as unusable, and stage C's `degraded` flag is
           deliberately NOT widened to catch it by run-count alone, because
           that also caught every merely-partial or in-progress partition

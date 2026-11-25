@@ -285,16 +285,30 @@ def clean_range(start: str, end: str,
                     frames.append(pd.read_parquet(path))
                 else:
                     missing.append(path.name)
-            if not frames or raw_cache_path(raw_cache, table, period).name in missing:
-                if (table, str(period)) in _known_gaps():
-                    rec['error'] = ''
-                    rec['known_gap'] = True
+            own_missing = raw_cache_path(raw_cache, table, period).name in missing
+            is_known_gap = (table, str(period)) in _known_gaps()
+            if is_known_gap and own_missing:
+                rec['known_gap'] = True
+                if not frames:
                     if verbose:
                         print(f"  [GAP]  {table:<12} {period}  known archive "
-                              "gap, not acquired by stage A: "
+                              "gap, not acquired by stage A, and the previous "
+                              "month's source file is absent too: "
                               f"{_known_gaps()[(table, str(period))][:90]}")
                     out.append(rec)
                     continue
+                # The month's own source file does not exist, but its leading
+                # runs (00:00 to 04:00 for PREDISPATCH) live in the previous
+                # month's file and do. They are written as a short partition
+                # so the month is present in the store, and therefore in the
+                # manifest with known_archive_gap set, which is what the
+                # forecast provider's on_degraded_period policy keys on.
+                if verbose:
+                    print(f"  [GAP]  {table:<12} {period}  known archive "
+                          "gap; writing only the leading runs held in the "
+                          f"previous month's source file. "
+                          f"{_known_gaps()[(table, str(period))][:90]}")
+            elif not frames or own_missing:
                 rec['error'] = f"raw cache missing: {', '.join(missing)}"
                 if verbose:
                     print(f"  [SKIP] {table:<12} {period}  {rec['error']}")
@@ -308,7 +322,7 @@ def clean_range(start: str, end: str,
             in_month = (cleaned['run_time'].dt.tz_convert(MARKET_TZ)
                         .dt.tz_localize(None).dt.to_period('M') == period)
             cleaned = cleaned[in_month]
-            if len(missing) and verbose:
+            if len(missing) and verbose and not rec['known_gap']:
                 prev_is_known_gap = (
                     missing[0] == raw_cache_path(raw_cache, table, period - 1).name
                     and (table, str(period - 1)) in _known_gaps())
@@ -343,9 +357,11 @@ def clean_range(start: str, end: str,
           f"{sum(r['rows'] for r in ok):,} rows, "
           f"{sum(r['dropped'] for r in ok):,} intervention row(s) dropped")
     if gaps:
-        print(f"{len(gaps)} known archive gap(s), excluded from the count "
+        print(f"{len(gaps)} known archive gap(s), excluded from the month count "
               "above and not fixable by re-running stage A: "
-              + ', '.join(f"{r['table']} {r['period']}" for r in gaps))
+              + ', '.join(f"{r['table']} {r['period']} ({r['rows']:,} rows "
+                          "from the previous month's source file)"
+                          for r in gaps))
     missing = [r for r in out if r['error']]
     if missing:
         print(f"{len(missing)} raw cache file(s) absent; run "

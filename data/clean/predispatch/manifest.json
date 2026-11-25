@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-11-19T09:47:25.676914+00:00",
+  "generated_utc": "2026-11-23T03:34:53.134863+00:00",
   "market_timezone": "Etc/GMT-10",
   "entries": [
     {
@@ -817,12 +817,12 @@
       "table": "predispatch",
       "region": "NSW1",
       "period": "2022-10",
-      "n_runs": 1,
-      "n_rows": 57,
+      "n_runs": 9,
+      "n_rows": 477,
       "max_lead_minutes": 1680,
       "missing_runs_internal": 0,
       "missing_runs_leading": 0,
-      "missing_runs_trailing": 1487,
+      "missing_runs_trailing": 1479,
       "partial": true,
       "wrong_target_count": 0,
       "out_of_range": 0,

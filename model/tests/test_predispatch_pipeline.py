@@ -641,3 +641,85 @@ def test_clean_range_does_not_rewrite_the_previous_month(tmp_path):
                 raw_cache=raw, store_root=tmp_path / 'store', verbose=False)
     assert not partition_path(tmp_path / 'store', 'p5min', 'SA1',
                               pd.Period('2026-01', freq='M')).exists()
+
+
+# ------------------- known archive gaps (October 2022 shape)
+
+from pipeline.pre_dispatch.C_Validate_Predispatch import (  # noqa: E402
+    KNOWN_ARCHIVE_GAPS,
+)
+
+
+def _source_file_predispatch(period, out_dir, regions=('SA1',)):
+    """A PREDISPATCH SOURCE file as AEMO partitions it: M-01 04:30 to
+    M+1-01 04:00, so the next month's 00:00 to 04:00 runs live here."""
+    p = pd.Period(period, freq='M')
+    runs = pd.date_range(p.to_timestamp() + pd.Timedelta(hours=4, minutes=30),
+                         (p + 1).to_timestamp() + pd.Timedelta(hours=4),
+                         freq='30min')
+    rows = []
+    for run in runs:
+        n = int((predispatch_horizon_end(run) - run).total_seconds() // 1800) + 1
+        for region in regions:
+            for k in range(n):
+                rows.append({'PREDISPATCH_RUN_DATETIME': run,
+                             'DATETIME': run + pd.Timedelta(minutes=30 * k),
+                             'REGIONID': region, 'RRP': 80.0 + k,
+                             'INTERVENTION': 0})
+    out_dir.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(rows).to_parquet(_rcp(out_dir, 'predispatch', p), index=False)
+
+
+def test_clean_range_writes_the_leading_runs_of_a_known_gap(tmp_path,
+                                                            monkeypatch):
+    """Regression. A known-gap month used to be skipped outright, discarding
+    the nine runs the previous month's source file holds for it. With no
+    partition the month dropped out of the manifest, and with it the
+    known_archive_gap flag the forecast provider's on_degraded_period policy
+    keys on."""
+    monkeypatch.setitem(KNOWN_ARCHIVE_GAPS, ('predispatch', '2026-02'),
+                        'synthetic gap for this test')
+    raw = tmp_path / 'raw'
+    _source_file_predispatch('2026-01', raw)
+    out = clean_range('2026-02', '2026-02', tables=('predispatch',),
+                      regions=('SA1',), raw_cache=raw,
+                      store_root=tmp_path / 'store', verbose=False)
+    assert out[0]['known_gap'] and not out[0]['error']
+    rep = validate_partition(tmp_path / 'store', 'predispatch', 'SA1',
+                             pd.Period('2026-02', freq='M'))
+    assert rep.n_runs == 9                       # 00:00 to 04:00 on the 1st
+    assert rep.known_gap and rep.ok and not rep.wrong_target_count
+    entry = build_manifest([rep], tmp_path / 'store')['entries'][0]
+    assert entry['known_archive_gap'] is True
+
+
+def test_clean_range_known_gap_without_previous_file_is_not_an_error(
+        tmp_path, monkeypatch):
+    monkeypatch.setitem(KNOWN_ARCHIVE_GAPS, ('predispatch', '2026-02'),
+                        'synthetic gap for this test')
+    out = clean_range('2026-02', '2026-02', tables=('predispatch',),
+                      regions=('SA1',), raw_cache=tmp_path / 'raw',
+                      store_root=tmp_path / 'store', verbose=False)
+    assert out[0]['known_gap'] and not out[0]['error']
+    assert not partition_path(tmp_path / 'store', 'predispatch', 'SA1',
+                              pd.Period('2026-02', freq='M')).exists()
+
+
+def test_manifest_lists_a_known_gap_with_no_partition(tmp_path, monkeypatch):
+    """A known gap inside the store's span is reported even when nothing is on
+    disk for it; one outside the span is not."""
+    monkeypatch.setitem(KNOWN_ARCHIVE_GAPS, ('predispatch', '2026-02'),
+                        'synthetic gap inside the span')
+    monkeypatch.setitem(KNOWN_ARCHIVE_GAPS, ('predispatch', '2025-06'),
+                        'synthetic gap outside the span')
+    for start in ('2026-01-10 13:00', '2026-03-10 13:00'):
+        write_partitions(clean_forecast_frame(raw_predispatch(start=start),
+                                              'predispatch'),
+                         'predispatch', tmp_path)
+    reports = validate_store(tmp_path, tables=('predispatch',),
+                             regions=('SA1',), verbose=False)
+    assert [r.period for r in reports] == ['2026-01', '2026-02', '2026-03']
+    gap = reports[1]
+    assert gap.known_gap and gap.ok and gap.n_runs == 0
+    entry = build_manifest(reports, tmp_path)['entries'][1]
+    assert entry['known_archive_gap'] is True and entry['ok'] is True
